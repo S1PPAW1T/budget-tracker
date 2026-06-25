@@ -1,19 +1,16 @@
 import { useState, useMemo } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts"
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts"
 import { useBudget } from "@/context/BudgetContext"
 import { format, startOfWeek, addDays, eachDayOfInterval, eachWeekOfInterval, eachMonthOfInterval, startOfYear, endOfYear } from "date-fns"
 
 type ViewMode = "Daily" | "Weekly" | "Monthly"
 
-const EXPENSE_COLORS = ['#f43f5e', '#fb923c', '#eab308', '#a855f7', '#ec4899', '#ef4444']
-const INCOME_COLORS = ['#2ecc71', '#10b981', '#14b8a6', '#06b6d4', '#3b82f6', '#8b5cf6']
-
 export function TransactionChart() {
   const { transactions } = useBudget()
   const [viewMode, setViewMode] = useState<ViewMode>("Daily")
 
-  const { data, incomeData, expenseData } = useMemo(() => {
+  const { data } = useMemo(() => {
     const today = new Date()
     let groupedData: Record<string, { income: number; expense: number }> = {}
     let incomeMap: Record<string, number> = {}
@@ -86,24 +83,9 @@ export function TransactionChart() {
         name: key,
         Income: groupedData[key].income,
         Expense: groupedData[key].expense
-      })),
-      incomeData: Object.entries(incomeMap).map(([name, value]) => ({ name, value })).sort((a, b) => b.value - a.value),
-      expenseData: Object.entries(expenseMap).map(([name, value]) => ({ name, value })).sort((a, b) => b.value - a.value)
+      }))
     }
   }, [transactions, viewMode])
-
-  const renderCustomLabel = ({ cx, cy, midAngle, outerRadius, value, name }: any) => {
-    const RADIAN = Math.PI / 180
-    const radius = outerRadius * 1.3
-    const x = cx + radius * Math.cos(-midAngle * RADIAN)
-    const y = cy + radius * Math.sin(-midAngle * RADIAN)
-  
-    return (
-      <text x={x} y={y} fill="currentColor" textAnchor={x > cx ? 'start' : 'end'} dominantBaseline="central" className="text-sm sm:text-base font-semibold">
-        {name} ฿{value.toLocaleString()}
-      </text>
-    )
-  }
 
   return (
     <Card className="col-span-full">

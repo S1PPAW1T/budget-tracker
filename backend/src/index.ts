@@ -42,6 +42,7 @@ app.get("/api/categories", async (req, res) => {
     
     res.json(categories)
   } catch (error) {
+    console.error("Error fetching categories:", error)
     res.status(500).json({ error: "Failed to fetch categories" })
   }
 })
@@ -60,6 +61,7 @@ app.post("/api/categories", async (req, res) => {
     }
     res.json(category)
   } catch (error) {
+    console.error("Error creating category:", error)
     res.status(500).json({ error: "Failed to create category (name might not be unique)" })
   }
 })
@@ -72,6 +74,7 @@ app.delete("/api/categories/:name", async (req, res) => {
     })
     res.json({ success: true })
   } catch (error) {
+    console.error("Error deleting category:", error)
     res.status(500).json({ error: "Failed to delete category" })
   }
 })
@@ -85,6 +88,7 @@ app.get("/api/budgets", async (req, res) => {
     })
     res.json(budgets)
   } catch (error) {
+    console.error("Error fetching budgets:", error)
     res.status(500).json({ error: "Failed to fetch budgets" })
   }
 })
@@ -99,6 +103,7 @@ app.put("/api/budgets/:categoryId", async (req, res) => {
     })
     res.json(budget)
   } catch (error) {
+    console.error("Error updating budget:", error)
     res.status(500).json({ error: "Failed to update budget" })
   }
 })
@@ -113,6 +118,7 @@ app.get("/api/transactions", async (req, res) => {
     })
     res.json(transactions)
   } catch (error) {
+    console.error("Error fetching transactions:", error)
     res.status(500).json({ error: "Failed to fetch transactions" })
   }
 })
@@ -132,6 +138,7 @@ app.post("/api/transactions", async (req, res) => {
     })
     res.json(transaction)
   } catch (error) {
+    console.error("Error creating transaction:", error)
     res.status(500).json({ error: "Failed to create transaction" })
   }
 })
@@ -153,6 +160,7 @@ app.put("/api/transactions/:id", async (req, res) => {
     })
     res.json(transaction)
   } catch (error) {
+    console.error("Error updating transaction:", error)
     res.status(500).json({ error: "Failed to update transaction" })
   }
 })
@@ -165,6 +173,7 @@ app.delete("/api/transactions/:id", async (req, res) => {
     })
     res.json({ success: true })
   } catch (error) {
+    console.error("Error deleting transaction:", error)
     res.status(500).json({ error: "Failed to delete transaction" })
   }
 })
