@@ -1,0 +1,39 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model Category {
+  id           String        @id @default(auto()) @map("_id") @db.ObjectId
+  name         String        @unique
+  type         String        // "Income" or "Expense"
+  
+  transactions Transaction[]
+  budgets      Budget[]
+}
+
+model Budget {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  limit      Float
+  categoryId String   @unique @db.ObjectId
+  
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+}
+
+model Transaction {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  amount     Float
+  date       DateTime @default(now())
+  type       String   // "Income" | "Expense"
+  note       String?
+  categoryId String   @db.ObjectId
+  
+  category   Category @relation(fields: [categoryId], references: [id])
+}
