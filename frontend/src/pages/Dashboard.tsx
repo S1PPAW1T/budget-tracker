@@ -16,11 +16,11 @@ export default function DashboardPage() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-4xl font-bold tracking-tight">Dashboard</h1>
-          <p className="text-lg text-muted-foreground mt-2">Overview of your budget and spending.</p>
+          <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
+          <p className="text-base text-muted-foreground mt-1">Overview of your budget and spending.</p>
         </div>
-        <Button onClick={() => setIsModalOpen(true)} className="gap-2 text-base py-6 px-6">
-          <PlusIcon className="h-5 w-5" />
+        <Button onClick={() => setIsModalOpen(true)} size="sm" className="gap-2">
+          <PlusIcon className="h-4 w-4" />
           Add Transaction
         </Button>
       </div>

@@ -37,11 +37,11 @@ export function SummaryCards() {
     <div className="grid gap-4 md:grid-cols-3">
       <Card>
         <CardHeader className="flex flex-row items-center justify-between pb-2">
-          <CardTitle className="text-base font-semibold text-muted-foreground">Income (รายรับเดือนนี้)</CardTitle>
-          <ArrowUpIcon className="h-5 w-5 text-emerald-500" />
+          <CardTitle className="text-sm font-medium text-muted-foreground">Income (รายรับเดือนนี้)</CardTitle>
+          <ArrowUpIcon className="h-4 w-4 text-emerald-500" />
         </CardHeader>
         <CardContent>
-          <div className="text-4xl font-bold tracking-tight text-emerald-500">
+          <div className="text-3xl font-bold tracking-tight text-emerald-500">
             ฿{totalIncome.toLocaleString()}
           </div>
         </CardContent>
@@ -49,11 +49,11 @@ export function SummaryCards() {
       
       <Card>
         <CardHeader className="flex flex-row items-center justify-between pb-2">
-          <CardTitle className="text-base font-semibold text-muted-foreground">Expenses (รายจ่ายเดือนนี้)</CardTitle>
-          <ArrowDownIcon className="h-5 w-5 text-rose-500" />
+          <CardTitle className="text-sm font-medium text-muted-foreground">Expenses (รายจ่ายเดือนนี้)</CardTitle>
+          <ArrowDownIcon className="h-4 w-4 text-rose-500" />
         </CardHeader>
         <CardContent>
-          <div className="text-4xl font-bold tracking-tight text-rose-500">
+          <div className="text-3xl font-bold tracking-tight text-rose-500">
             ฿{totalExpense.toLocaleString()}
           </div>
         </CardContent>
@@ -61,11 +61,11 @@ export function SummaryCards() {
 
       <Card>
         <CardHeader className="flex flex-row items-center justify-between pb-2">
-          <CardTitle className="text-base font-semibold text-muted-foreground">Total Balance (เงินคงเหลือทั้งหมด)</CardTitle>
-          <WalletIcon className="h-5 w-5 text-blue-500" />
+          <CardTitle className="text-sm font-medium text-muted-foreground">Total Balance (เงินคงเหลือทั้งหมด)</CardTitle>
+          <WalletIcon className="h-4 w-4 text-blue-500" />
         </CardHeader>
         <CardContent>
-          <div className={allTimeRemaining >= 0 ? "text-4xl font-bold tracking-tight text-blue-500" : "text-4xl font-bold tracking-tight text-rose-500"}>
+          <div className={allTimeRemaining >= 0 ? "text-3xl font-bold tracking-tight text-blue-500" : "text-3xl font-bold tracking-tight text-rose-500"}>
             ฿{allTimeRemaining.toLocaleString()}
           </div>
         </CardContent>

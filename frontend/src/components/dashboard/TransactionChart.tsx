@@ -89,14 +89,14 @@ export function TransactionChart() {
 
   return (
     <Card className="col-span-full">
-      <CardHeader className="flex flex-row items-center justify-between pb-6">
-        <CardTitle className="text-2xl">Income vs Expenses</CardTitle>
-        <div className="flex bg-secondary p-1.5 rounded-lg">
+      <CardHeader className="flex flex-row items-center justify-between pb-4">
+        <CardTitle className="text-xl">Income vs Expenses</CardTitle>
+        <div className="flex bg-secondary p-1 rounded-md">
           {(["Daily", "Weekly", "Monthly"] as ViewMode[]).map((mode) => (
             <button
               key={mode}
               onClick={() => setViewMode(mode)}
-              className={`px-4 py-1.5 text-sm font-semibold rounded-md transition-colors ${
+              className={`px-3 py-1 text-xs font-semibold rounded transition-colors ${
                 viewMode === mode ? "bg-background shadow-sm text-primary" : "text-muted-foreground hover:text-foreground"
               }`}
             >
@@ -105,9 +105,9 @@ export function TransactionChart() {
           ))}
         </div>
       </CardHeader>
-      <CardContent className="space-y-12">
+      <CardContent className="space-y-6">
         {/* Line Chart */}
-        <div className="h-[350px] w-full">
+        <div className="h-[280px] w-full">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={data} margin={{ top: 10, right: 20, left: 0, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
@@ -118,8 +118,8 @@ export function TransactionChart() {
                 itemStyle={{ color: 'hsl(var(--foreground))' }}
               />
               <Legend wrapperStyle={{ fontSize: '14px', fontWeight: 600, marginTop: '10px' }} />
-              <Line type="monotone" dataKey="Income" stroke="#2ecc71" strokeWidth={4} dot={{ r: 5 }} activeDot={{ r: 8 }} />
-              <Line type="monotone" dataKey="Expense" stroke="#f43f5e" strokeWidth={4} dot={{ r: 5 }} activeDot={{ r: 8 }} />
+              <Line type="monotone" dataKey="Income" stroke="#2ecc71" strokeWidth={3} dot={{ r: 4 }} activeDot={{ r: 6 }} />
+              <Line type="monotone" dataKey="Expense" stroke="#f43f5e" strokeWidth={3} dot={{ r: 4 }} activeDot={{ r: 6 }} />
             </LineChart>
           </ResponsiveContainer>
         </div>

@@ -49,9 +49,6 @@
   * {
     @apply border-border;
   }
-  html {
-    font-size: 14px; /* Scaled down from default 16px to make everything smaller */
-  }
   
   body {
     @apply bg-background text-foreground antialiased;

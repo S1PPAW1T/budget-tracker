@@ -20,18 +20,18 @@ export function RecentTransactions() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-2xl">Recent Transactions</CardTitle>
+        <CardTitle className="text-xl">Recent Transactions</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="space-y-6">
+        <div className="space-y-4">
           {recent.map((tx) => (
             <div key={tx.id} className="flex items-center justify-between">
               <div>
-                <p className="text-lg font-medium">{tx.note || tx.category}</p>
-                <p className="text-base text-muted-foreground">{format(new Date(tx.date), "MMM dd, yyyy")} • {tx.category}</p>
+                <p className="text-base font-medium">{tx.note || tx.category}</p>
+                <p className="text-sm text-muted-foreground">{format(new Date(tx.date), "MMM dd, yyyy")} • {tx.category}</p>
               </div>
-              <div className="flex items-center gap-4">
-                <div className={`text-xl font-bold ${tx.type === "Income" ? "text-emerald-500" : "text-rose-500"}`}>
+              <div className="flex items-center gap-3">
+                <div className={`text-base font-bold ${tx.type === "Income" ? "text-emerald-500" : "text-rose-500"}`}>
                   {tx.type === "Income" ? "+" : "-"}฿{tx.amount.toLocaleString()}
                 </div>
                 <Button variant="ghost" size="icon" onClick={() => { setTransactionToEdit(tx); setIsModalOpen(true); }} className="h-8 w-8 text-muted-foreground hover:text-foreground">

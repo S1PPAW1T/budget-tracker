@@ -87,14 +87,14 @@ export default function ReportsPage() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-4xl font-bold tracking-tight">Monthly Reports</h1>
-          <p className="text-lg text-muted-foreground mt-2">Deep dive into your monthly income, expenses, and budgets.</p>
+          <h1 className="text-3xl font-bold tracking-tight">Monthly Reports</h1>
+          <p className="text-base text-muted-foreground mt-1">Deep dive into your monthly income, expenses, and budgets.</p>
         </div>
         <div className="flex gap-4">
           <Select 
             value={selectedMonth} 
             onChange={(e) => setSelectedMonth(e.target.value)}
-            className="text-lg py-2.5 px-4 h-auto w-40 bg-card border-primary/30 shadow-sm rounded-xl focus:ring-primary"
+            className="text-base py-2 px-3 h-auto w-36 bg-card border-primary/30 shadow-sm rounded-lg focus:ring-primary"
           >
             {months.map(opt => (
               <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -103,7 +103,7 @@ export default function ReportsPage() {
           <Select 
             value={selectedYear} 
             onChange={(e) => setSelectedYear(e.target.value)}
-            className="text-lg py-2.5 px-4 h-auto w-32 bg-card border-primary/30 shadow-sm rounded-xl focus:ring-primary"
+            className="text-base py-2 px-3 h-auto w-28 bg-card border-primary/30 shadow-sm rounded-lg focus:ring-primary"
           >
             {years.map(y => (
               <option key={y} value={y}>{y}</option>
@@ -116,11 +116,11 @@ export default function ReportsPage() {
       <div className="grid gap-4 md:grid-cols-3">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-lg font-semibold text-muted-foreground">Total Income</CardTitle>
-            <ArrowUpIcon className="h-6 w-6 text-emerald-500" />
+            <CardTitle className="text-sm font-medium text-muted-foreground">Total Income</CardTitle>
+            <ArrowUpIcon className="h-4 w-4 text-emerald-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-5xl font-bold tracking-tight text-emerald-500">
+            <div className="text-3xl font-bold tracking-tight text-emerald-500">
               ฿{totalIncome.toLocaleString()}
             </div>
           </CardContent>
@@ -128,11 +128,11 @@ export default function ReportsPage() {
         
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-lg font-semibold text-muted-foreground">Total Expenses</CardTitle>
-            <ArrowDownIcon className="h-6 w-6 text-rose-500" />
+            <CardTitle className="text-sm font-medium text-muted-foreground">Total Expenses</CardTitle>
+            <ArrowDownIcon className="h-4 w-4 text-rose-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-5xl font-bold tracking-tight text-rose-500">
+            <div className="text-3xl font-bold tracking-tight text-rose-500">
               ฿{totalExpense.toLocaleString()}
             </div>
           </CardContent>
@@ -140,11 +140,11 @@ export default function ReportsPage() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-lg font-semibold text-muted-foreground">Net Balance</CardTitle>
-            <WalletIcon className="h-6 w-6 text-blue-500" />
+            <CardTitle className="text-sm font-medium text-muted-foreground">Net Balance</CardTitle>
+            <WalletIcon className="h-4 w-4 text-blue-500" />
           </CardHeader>
           <CardContent>
-            <div className={remaining >= 0 ? "text-5xl font-bold tracking-tight text-blue-500" : "text-5xl font-bold tracking-tight text-rose-500"}>
+            <div className={remaining >= 0 ? "text-3xl font-bold tracking-tight text-blue-500" : "text-3xl font-bold tracking-tight text-rose-500"}>
               ฿{remaining.toLocaleString()}
             </div>
           </CardContent>
@@ -155,11 +155,11 @@ export default function ReportsPage() {
         {/* Charts */}
         <Card className="col-span-full">
           <CardHeader>
-            <CardTitle className="text-2xl">Income vs Expense Breakdown</CardTitle>
+            <CardTitle className="text-xl">Income vs Expense Breakdown</CardTitle>
           </CardHeader>
           <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-8 pb-8">
-            <div className="h-[350px] w-full flex flex-col items-center">
-              <h3 className="text-xl font-bold mb-4 text-center tracking-tight text-emerald-500">Income</h3>
+            <div className="h-[280px] w-full flex flex-col items-center">
+              <h3 className="text-lg font-bold mb-4 text-center tracking-tight text-emerald-500">Income</h3>
               {incomeData.length === 0 ? (
                 <div className="flex-1 flex items-center justify-center text-muted-foreground text-base">No income this month</div>
               ) : (
@@ -185,8 +185,8 @@ export default function ReportsPage() {
               )}
             </div>
 
-            <div className="h-[350px] w-full flex flex-col items-center border-t md:border-t-0 md:border-l border-border/50 pt-6 md:pt-0">
-              <h3 className="text-xl font-bold mb-4 text-center tracking-tight text-rose-500">Expenses</h3>
+            <div className="h-[280px] w-full flex flex-col items-center border-t md:border-t-0 md:border-l border-border/50 pt-6 md:pt-0">
+              <h3 className="text-lg font-bold mb-4 text-center tracking-tight text-rose-500">Expenses</h3>
               {expenseData.length === 0 ? (
                 <div className="flex-1 flex items-center justify-center text-muted-foreground text-base">No expenses this month</div>
               ) : (
@@ -217,30 +217,30 @@ export default function ReportsPage() {
         {/* Budget Limits */}
         <Card className="col-span-full">
           <CardHeader>
-            <CardTitle className="text-2xl">Monthly Budget Limits</CardTitle>
+            <CardTitle className="text-xl">Monthly Budget Limits</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-8">
-              <div className="p-5 bg-muted/50 rounded-xl border border-border/50 shadow-inner">
-                <div className="flex flex-col gap-2 mb-4">
+            <div className="space-y-6">
+              <div className="p-4 bg-muted/50 rounded-xl border border-border/50 shadow-inner">
+                <div className="flex flex-col gap-2 mb-3">
                   <div className="flex items-center justify-between">
-                    <h3 className="text-xl font-semibold">Overall Budget</h3>
-                    <span className="text-base font-medium px-4 py-2 bg-background rounded-md border shadow-sm">
+                    <h3 className="text-lg font-semibold">Overall Budget</h3>
+                    <span className="text-sm font-medium px-3 py-1.5 bg-background rounded-md border shadow-sm">
                       Remaining: <span className={`font-bold ${isOverallOver ? 'text-destructive' : 'text-primary'}`}>฿{(totalLimit - totalExpense).toLocaleString()}</span>
                     </span>
                   </div>
                 </div>
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between text-lg">
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between text-sm">
                     <span className="text-muted-foreground font-medium">Total Spent</span>
-                    <span className="font-semibold text-foreground text-xl">
-                      ฿{totalExpense.toLocaleString()} <span className="text-muted-foreground font-normal text-lg">/ ฿{totalLimit.toLocaleString()}</span>
+                    <span className="font-semibold text-foreground text-base">
+                      ฿{totalExpense.toLocaleString()} <span className="text-muted-foreground font-normal text-sm">/ ฿{totalLimit.toLocaleString()}</span>
                     </span>
                   </div>
                   <Progress 
                     value={overallPercentage} 
                     indicatorClassName={isOverallOver ? "bg-destructive" : overallPercentage > 80 ? "bg-yellow-500" : "bg-primary"}
-                    className="h-5 bg-background/50 rounded-full"
+                    className="h-3 bg-background/50 rounded-full"
                   />
                 </div>
               </div>
@@ -252,8 +252,8 @@ export default function ReportsPage() {
                   const isOver = budget.limit > 0 && spent > budget.limit
 
                   return (
-                    <div key={budget.category} className="space-y-3 p-4 border border-border/50 rounded-xl bg-background/50">
-                      <div className="flex items-center justify-between text-lg">
+                    <div key={budget.category} className="space-y-2 p-3 border border-border/50 rounded-xl bg-background/50">
+                      <div className="flex items-center justify-between text-sm">
                         <span className="font-semibold">{budget.category}</span>
                         <span className="text-muted-foreground font-medium">
                           ฿{spent.toLocaleString()} / ฿{Number(budget.limit).toLocaleString()}
@@ -262,7 +262,7 @@ export default function ReportsPage() {
                       <Progress 
                         value={percentage} 
                         indicatorClassName={isOver ? "bg-destructive" : percentage > 80 ? "bg-yellow-500" : "bg-primary"}
-                        className="h-2.5"
+                        className="h-2"
                       />
                     </div>
                   )

@@ -29,44 +29,44 @@ export function BudgetProgress() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-2xl">Budget Limits</CardTitle>
+        <CardTitle className="text-xl">Budget Limits</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="space-y-8">
-          <div className="p-5 bg-muted/50 rounded-xl border border-border/50 shadow-inner">
-            <div className="flex flex-col gap-2 mb-4">
+        <div className="space-y-6">
+          <div className="p-4 bg-muted/50 rounded-xl border border-border/50 shadow-inner">
+            <div className="flex flex-col gap-2 mb-3">
               <div className="flex items-center justify-between">
-                <h3 className="text-xl font-semibold">Overall Budget</h3>
-                <span className="text-base font-medium px-4 py-2 bg-background rounded-md border shadow-sm">
+                <h3 className="text-lg font-semibold">Overall Budget</h3>
+                <span className="text-sm font-medium px-3 py-1.5 bg-background rounded-md border shadow-sm">
                   Remaining: <span className={`font-bold ${isOverallOver ? 'text-destructive' : 'text-primary'}`}>฿{remainingBudget.toLocaleString()}</span>
                 </span>
               </div>
             </div>
-            <div className="space-y-4">
-              <div className="flex items-center justify-between text-lg">
+            <div className="space-y-3">
+              <div className="flex items-center justify-between text-sm">
                 <span className="text-muted-foreground font-medium">Total Spent</span>
-                <span className="font-semibold text-foreground text-xl">
-                  ฿{totalSpent.toLocaleString()} <span className="text-muted-foreground font-normal text-lg">/ ฿{totalLimit.toLocaleString()}</span>
+                <span className="font-semibold text-foreground text-base">
+                  ฿{totalSpent.toLocaleString()} <span className="text-muted-foreground font-normal text-sm">/ ฿{totalLimit.toLocaleString()}</span>
                 </span>
               </div>
               <Progress 
                 value={overallPercentage} 
                 indicatorClassName={isOverallOver ? "bg-destructive" : overallPercentage > 80 ? "bg-yellow-500" : "bg-primary"}
-                className="h-5 bg-background/50 rounded-full"
+                className="h-3 bg-background/50 rounded-full"
               />
             </div>
           </div>
 
-          <div className="space-y-6">
-            <h4 className="text-lg font-semibold text-muted-foreground uppercase tracking-wider">By Category</h4>
+          <div className="space-y-4">
+            <h4 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">By Category</h4>
             {budgets.map((budget) => {
               const spent = categorySpent[budget.category] || 0
               const percentage = budget.limit > 0 ? Math.min((spent / budget.limit) * 100, 100) : (spent > 0 ? 100 : 0)
               const isOver = budget.limit > 0 && spent > budget.limit
 
               return (
-                <div key={budget.category} className="space-y-3">
-                  <div className="flex items-center justify-between text-lg">
+                <div key={budget.category} className="space-y-2">
+                  <div className="flex items-center justify-between text-sm">
                     <span className="font-semibold">{budget.category}</span>
                     <span className="text-muted-foreground font-medium">
                       ฿{spent.toLocaleString()} / ฿{Number(budget.limit).toLocaleString()}
@@ -75,7 +75,7 @@ export function BudgetProgress() {
                   <Progress 
                     value={percentage} 
                     indicatorClassName={isOver ? "bg-destructive" : percentage > 80 ? "bg-yellow-500" : "bg-primary"}
-                    className="h-2.5"
+                    className="h-2"
                   />
                 </div>
               )
