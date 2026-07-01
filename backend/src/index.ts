@@ -69,9 +69,21 @@ app.post("/api/categories", async (req, res) => {
 app.delete("/api/categories/:name", async (req, res) => {
   const { name } = req.params
   try {
-    await prisma.category.delete({
-      where: { name },
-    })
+    const category = await prisma.category.findUnique({ where: { name } })
+    if (category) {
+      // First delete associated transactions
+      await prisma.transaction.deleteMany({
+        where: { categoryId: category.id },
+      })
+      // Also delete associated budget if any
+      await prisma.budget.deleteMany({
+        where: { categoryId: category.id },
+      })
+      
+      await prisma.category.delete({
+        where: { name },
+      })
+    }
     res.json({ success: true })
   } catch (error) {
     console.error("Error deleting category:", error)

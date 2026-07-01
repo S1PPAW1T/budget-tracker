@@ -6,11 +6,11 @@ import { format, isThisWeek, isThisMonth, isThisYear } from "date-fns"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { TransactionFormModal } from "@/components/transactions/TransactionFormModal"
 import { Button } from "@/components/ui/button"
-import { PlusIcon, PencilIcon } from "lucide-react"
+import { PlusIcon, PencilIcon, Trash2 } from "lucide-react"
 import { Select } from "@/components/ui/select"
 
 export default function TransactionsPage() {
-  const { transactions } = useBudget()
+  const { transactions, deleteTransaction } = useBudget()
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [transactionToEdit, setTransactionToEdit] = useState<any>(null)
   const [range, setRange] = useState<"all" | "week" | "month" | "year">("all")
@@ -87,15 +87,20 @@ export default function TransactionsPage() {
                       </thead>
                       <tbody>
                         {categoryTransactions.map(tx => (
-                          <tr key={tx.id} className="border-b last:border-0 hover:bg-secondary/20 transition-colors">
+                          <tr key={tx.id} className="group border-b last:border-0 hover:bg-secondary/20 transition-colors">
                             <td className="px-4 py-3 whitespace-nowrap">{format(new Date(tx.date), "MMM dd, yyyy")}</td>
                             <td className="px-4 py-3 text-muted-foreground">{tx.note || "-"}</td>
                             <td className={`px-4 py-3 text-right text-base font-bold whitespace-nowrap ${tx.type === "Income" ? "text-emerald-500" : "text-rose-500"}`}>
                               <div className="flex items-center justify-end gap-3">
                                 <span>{tx.type === "Income" ? "+" : "-"}฿{tx.amount.toLocaleString()}</span>
-                                <Button variant="ghost" size="icon" onClick={() => { setTransactionToEdit(tx); setIsModalOpen(true); }} className="h-8 w-8 text-muted-foreground hover:text-foreground">
-                                  <PencilIcon className="h-4 w-4" />
-                                </Button>
+                                <div className="flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100 focus-within:opacity-100">
+                                  <Button variant="ghost" size="icon" onClick={() => { setTransactionToEdit(tx); setIsModalOpen(true); }} className="h-8 w-8 text-muted-foreground hover:text-foreground">
+                                    <PencilIcon className="h-4 w-4" />
+                                  </Button>
+                                  <Button variant="ghost" size="icon" onClick={() => deleteTransaction(tx.id)} className="h-8 w-8 text-muted-foreground hover:text-destructive">
+                                    <Trash2 className="h-4 w-4" />
+                                  </Button>
+                                </div>
                               </div>
                             </td>
                           </tr>

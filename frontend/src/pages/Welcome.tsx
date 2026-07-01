@@ -11,10 +11,10 @@ export default function WelcomePage() {
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-primary/20 rounded-full blur-[120px] pointer-events-none" />
 
       <div className="z-10 flex flex-col items-center text-center space-y-8 p-6 max-w-3xl animate-in fade-in slide-in-from-bottom-8 duration-1000">
-        <div className="w-32 h-32 md:w-48 md:h-48 bg-card rounded-full flex items-center justify-center shadow-2xl border-4 border-primary/20 p-6 mb-4">
+        <div className="mx-auto h-24 w-24 overflow-hidden rounded-2xl bg-black border-2 border-primary/30 shadow-[0_0_30px_rgba(46,204,113,0.4)]">
           <img 
-            src="/panda-logo.png" 
-            alt="PandaBudget Logo" 
+            src="/panda.jpg" 
+            alt="Panda Logo" 
             className="w-full h-full object-contain"
           />
         </div>

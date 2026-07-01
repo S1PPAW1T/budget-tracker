@@ -22,6 +22,7 @@ interface BudgetContextType {
   updateBudget: (categoryName: string, newLimit: number) => void
   addCategory: (name: string, type: "Income" | "Expense") => void
   deleteCategory: (name: string) => void
+  deleteTransaction: (id: string) => void
 }
 
 const BudgetContext = createContext<BudgetContextType | undefined>(undefined)
@@ -108,6 +109,16 @@ export function BudgetProvider({ children }: { children: React.ReactNode }) {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['transactions'] })
   })
 
+  const deleteTxMutation = useMutation({
+    mutationFn: async (id: string) => {
+      await api.delete(`/transactions/${id}`)
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['transactions'] })
+      queryClient.invalidateQueries({ queryKey: ['budgets'] }) // updating budgets as transaction deletion might affect spent amount
+    }
+  })
+
   const updateTransaction = (id: string, tx: { amount: number, date: string, type: "Income" | "Expense", note?: string, category: string }) => {
     const cat = categories.find(c => c.name === tx.category)
     if (cat) {
@@ -139,6 +150,10 @@ export function BudgetProvider({ children }: { children: React.ReactNode }) {
     deleteCatMutation.mutate(name)
   }
 
+  const deleteTransaction = (id: string) => {
+    deleteTxMutation.mutate(id)
+  }
+
   const isLoading = isLoadingTx || isLoadingCat || isLoadingBudgets
 
   // We map the category objects over the transactions/budgets in case the backend doesn't populate perfectly.
@@ -162,7 +177,8 @@ export function BudgetProvider({ children }: { children: React.ReactNode }) {
       updateTransaction,
       updateBudget, 
       addCategory, 
-      deleteCategory 
+      deleteCategory,
+      deleteTransaction
     }}>
       {children}
     </BudgetContext.Provider>

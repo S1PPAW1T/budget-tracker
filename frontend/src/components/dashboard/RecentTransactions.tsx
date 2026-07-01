@@ -5,11 +5,11 @@ import { useBudget } from "@/context/BudgetContext"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { format } from "date-fns"
 import { Button } from "@/components/ui/button"
-import { PencilIcon } from "lucide-react"
+import { PencilIcon, Trash2 } from "lucide-react"
 import { TransactionFormModal } from "@/components/transactions/TransactionFormModal"
 
 export function RecentTransactions() {
-  const { transactions } = useBudget()
+  const { transactions, deleteTransaction } = useBudget()
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [transactionToEdit, setTransactionToEdit] = useState<any>(null)
 
@@ -47,9 +47,14 @@ export function RecentTransactions() {
                   <div className={`text-base font-bold ${tx.type === "Income" ? "text-emerald-500" : "text-rose-500"}`}>
                     {tx.type === "Income" ? "+" : "-"}฿{tx.amount.toLocaleString()}
                   </div>
-                  <Button variant="ghost" size="icon" onClick={() => { setTransactionToEdit(tx); setIsModalOpen(true); }} className="h-8 w-8 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100 focus:opacity-100">
-                    <PencilIcon className="h-4 w-4" />
-                  </Button>
+                  <div className="flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100 focus-within:opacity-100">
+                    <Button variant="ghost" size="icon" onClick={() => { setTransactionToEdit(tx); setIsModalOpen(true); }} className="h-8 w-8 text-muted-foreground hover:text-foreground">
+                      <PencilIcon className="h-4 w-4" />
+                    </Button>
+                    <Button variant="ghost" size="icon" onClick={() => deleteTransaction(tx.id)} className="h-8 w-8 text-muted-foreground hover:text-destructive">
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
                 </div>
               </div>
             ))

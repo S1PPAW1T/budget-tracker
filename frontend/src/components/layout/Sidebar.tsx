@@ -17,7 +17,7 @@ export function Sidebar() {
     <aside className="sticky top-0 hidden md:flex h-screen w-64 flex-col border-r border-border/50 bg-card/60 backdrop-blur-2xl px-4 py-6 shadow-2xl z-50">
       <div className="flex items-center gap-3 px-2 mb-8">
         <div className="flex h-10 w-10 overflow-hidden items-center justify-center rounded-xl bg-black border border-primary/30 shadow-[0_0_15px_rgba(46,204,113,0.3)]">
-          <img src="/panda-logo.png" alt="Panda Logo" className="h-full w-full object-cover" />
+          <img src="/panda.jpg" alt="Panda Logo" className="h-full w-full object-cover" />
         </div>
         <span className="text-xl font-bold tracking-tight text-primary drop-shadow-[0_0_8px_rgba(46,204,113,0.5)]">
           PandaBudget
