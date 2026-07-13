@@ -5,14 +5,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { ArrowDownIcon, ArrowUpIcon, WalletIcon } from "lucide-react"
 
 export function SummaryCards() {
-  const { transactions } = useBudget()
+  const { transactions, selectedMonth } = useBudget()
 
-  const currentMonth = new Date().getMonth()
-  const currentYear = new Date().getFullYear()
+  const [year, month] = selectedMonth.split('-').map(Number)
 
   const currentMonthTx = transactions.filter((tx) => {
     const d = new Date(tx.date)
-    return d.getMonth() === currentMonth && d.getFullYear() === currentYear
+    return d.getMonth() === month - 1 && d.getFullYear() === year
   })
 
   const totalIncome = currentMonthTx

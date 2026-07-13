@@ -38,7 +38,7 @@ function BudgetLimitItem({ budget, onSave }: { budget: any, onSave: (cat: string
 }
 
 export default function BudgetPage() {
-  const { budgets, updateBudget, categories, addCategory, deleteCategory } = useBudget()
+  const { budgets, updateBudget, categories, addCategory, deleteCategory, selectedMonth, setSelectedMonth } = useBudget()
 
   const [newCategoryName, setNewCategoryName] = useState("")
   const [newCategoryType, setNewCategoryType] = useState<"Income" | "Expense">("Expense")
@@ -52,9 +52,20 @@ export default function BudgetPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">Budget & Categories</h1>
-        <p className="text-base text-muted-foreground mt-1">Manage your monthly spending limits and transaction categories.</p>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Budget & Categories</h1>
+          <p className="text-base text-muted-foreground mt-1">Manage your monthly spending limits and transaction categories.</p>
+        </div>
+        <div className="flex items-center gap-2">
+          <label className="text-sm font-medium text-muted-foreground whitespace-nowrap">Month:</label>
+          <Input 
+            type="month" 
+            value={selectedMonth} 
+            onChange={(e) => setSelectedMonth(e.target.value)}
+            className="w-40"
+          />
+        </div>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">
@@ -103,10 +114,12 @@ export default function BudgetPage() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2">
-              {budgets.map((budget) => (
-                <BudgetLimitItem key={budget.category} budget={budget} onSave={updateBudget} />
-              ))}
-              {budgets.length === 0 && (
+              {categories.filter(c => c.type === "Expense").map((cat) => {
+                const budget = budgets.find(b => b.categoryId === cat.id || b.category === cat.name)
+                const budgetData = { category: cat.name, limit: budget ? budget.limit : 0 }
+                return <BudgetLimitItem key={cat.name} budget={budgetData} onSave={updateBudget} />
+              })}
+              {categories.filter(c => c.type === "Expense").length === 0 && (
                 <div className="text-center text-base text-muted-foreground py-6">
                   No expense categories found.
                 </div>

@@ -1,4 +1,4 @@
-import React, { createContext, useContext } from "react"
+import React, { createContext, useContext, useState } from "react"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { api, Transaction as ApiTransaction, Category as ApiCategory, Budget as ApiBudget } from "@/lib/api"
 
@@ -17,6 +17,8 @@ interface BudgetContextType {
   budgets: Budget[]
   categories: Category[]
   isLoading: boolean
+  selectedMonth: string
+  setSelectedMonth: (month: string) => void
   addTransaction: (tx: { amount: number, date: string, type: "Income" | "Expense", note?: string, category: string }) => void
   updateTransaction: (id: string, tx: { amount: number, date: string, type: "Income" | "Expense", note?: string, category: string }) => void
   updateBudget: (categoryName: string, newLimit: number) => void
@@ -29,6 +31,11 @@ const BudgetContext = createContext<BudgetContextType | undefined>(undefined)
 
 export function BudgetProvider({ children }: { children: React.ReactNode }) {
   const queryClient = useQueryClient()
+  
+  const currentYear = new Date().getFullYear()
+  const currentMonthNum = new Date().getMonth() + 1
+  const initialMonth = `${currentYear}-${currentMonthNum.toString().padStart(2, '0')}`
+  const [selectedMonth, setSelectedMonth] = useState(initialMonth)
 
   const { data: transactions = [], isLoading: isLoadingTx } = useQuery({
     queryKey: ['transactions'],
@@ -47,9 +54,9 @@ export function BudgetProvider({ children }: { children: React.ReactNode }) {
   })
 
   const { data: budgets = [], isLoading: isLoadingBudgets } = useQuery({
-    queryKey: ['budgets'],
+    queryKey: ['budgets', selectedMonth],
     queryFn: async () => {
-      const res = await api.get<ApiBudget[]>('/budgets')
+      const res = await api.get<ApiBudget[]>(`/budgets?month=${selectedMonth}`)
       return res.data
     }
   })
@@ -62,8 +69,8 @@ export function BudgetProvider({ children }: { children: React.ReactNode }) {
   })
 
   const updateBudgetMutation = useMutation({
-    mutationFn: async ({ categoryId, limit }: { categoryId: string, limit: number }) => {
-      await api.put(`/budgets/${categoryId}`, { limit })
+    mutationFn: async ({ categoryId, limit, month }: { categoryId: string, limit: number, month: string }) => {
+      await api.put(`/budgets/${categoryId}`, { limit, month })
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['budgets'] })
   })
@@ -138,7 +145,7 @@ export function BudgetProvider({ children }: { children: React.ReactNode }) {
   const updateBudget = (categoryName: string, newLimit: number) => {
     const cat = categories.find(c => c.name === categoryName)
     if (cat) {
-      updateBudgetMutation.mutate({ categoryId: cat.id, limit: newLimit })
+      updateBudgetMutation.mutate({ categoryId: cat.id, limit: newLimit, month: selectedMonth })
     }
   }
 
@@ -173,6 +180,8 @@ export function BudgetProvider({ children }: { children: React.ReactNode }) {
       budgets: adaptedBudgets, 
       categories, 
       isLoading,
+      selectedMonth,
+      setSelectedMonth,
       addTransaction, 
       updateTransaction,
       updateBudget, 

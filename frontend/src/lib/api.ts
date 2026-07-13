@@ -27,5 +27,6 @@ export interface Budget {
   id: string
   limit: number
   categoryId: string
+  month: string
   category?: Category
 }

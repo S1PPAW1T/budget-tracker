@@ -31,12 +31,6 @@ app.get("/api/categories", async (req, res) => {
       for (const cat of defaultCategories) {
         const created = await prisma.category.create({ data: cat })
         categories.push(created)
-        
-        if (cat.type === "Expense") {
-          await prisma.budget.create({
-            data: { limit: 0, categoryId: created.id },
-          })
-        }
       }
     }
     
@@ -53,12 +47,6 @@ app.post("/api/categories", async (req, res) => {
     const category = await prisma.category.create({
       data: { name, type },
     })
-    // If it's an expense category, auto-create a budget of 0
-    if (type === "Expense") {
-      await prisma.budget.create({
-        data: { limit: 0, categoryId: category.id },
-      })
-    }
     res.json(category)
   } catch (error) {
     console.error("Error creating category:", error)
@@ -94,8 +82,10 @@ app.delete("/api/categories/:name", async (req, res) => {
 // --- Budgets ---
 
 app.get("/api/budgets", async (req, res) => {
+  const { month } = req.query
   try {
     const budgets = await prisma.budget.findMany({
+      where: month ? { month: String(month) } : undefined,
       include: { category: true }
     })
     res.json(budgets)
@@ -107,11 +97,17 @@ app.get("/api/budgets", async (req, res) => {
 
 app.put("/api/budgets/:categoryId", async (req, res) => {
   const { categoryId } = req.params
-  const { limit } = req.body
+  const { limit, month } = req.body
   try {
-    const budget = await prisma.budget.update({
-      where: { categoryId },
-      data: { limit: Number(limit) },
+    if (!month) {
+      return res.status(400).json({ error: "month is required" })
+    }
+    const budget = await prisma.budget.upsert({
+      where: {
+        categoryId_month: { categoryId, month: String(month) }
+      },
+      update: { limit: Number(limit) },
+      create: { limit: Number(limit), categoryId, month: String(month) },
     })
     res.json(budget)
   } catch (error) {
