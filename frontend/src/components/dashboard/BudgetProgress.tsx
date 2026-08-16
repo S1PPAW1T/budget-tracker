@@ -20,9 +20,17 @@ export function BudgetProgress() {
   }, {} as Record<string, number>)
 
   const totalLimit = budgets.reduce((acc, b) => acc + Number(b.limit || 0), 0)
-  const totalSpent = Object.values(categorySpent).reduce((acc, spent) => acc + spent, 0)
+  const baseTotalSpent = Object.values(categorySpent).reduce((acc, spent) => acc + spent, 0)
+  
+  const currentMonthTransferIncome = transactions.filter((tx) => {
+    const d = new Date(tx.date)
+    return tx.type === "Income" && tx.category.toLowerCase() === "transfer" && d.getMonth() === month - 1 && d.getFullYear() === year
+  }).reduce((sum, tx) => sum + tx.amount, 0)
+
+  const totalSpent = baseTotalSpent - currentMonthTransferIncome
+
   const remainingBudget = totalLimit - totalSpent
-  const overallPercentage = totalLimit > 0 ? Math.min((totalSpent / totalLimit) * 100, 100) : 0
+  const overallPercentage = totalLimit > 0 ? Math.max(0, Math.min((totalSpent / totalLimit) * 100, 100)) : 0
   const isOverallOver = totalSpent > totalLimit
 
   return (
@@ -44,11 +52,25 @@ export function BudgetProgress() {
                 </div>
               </div>
               <div className="space-y-3">
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-muted-foreground font-medium">Total Spent</span>
-                  <span className="font-semibold text-foreground text-base">
-                    ฿{totalSpent.toLocaleString()} <span className="text-muted-foreground font-normal text-sm">/ ฿{totalLimit.toLocaleString()}</span>
-                  </span>
+                <div className="flex flex-col gap-1">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-muted-foreground font-medium">Total Spent</span>
+                    <span className="font-semibold text-foreground text-base">
+                      ฿{totalSpent.toLocaleString()} <span className="text-muted-foreground font-normal text-sm">/ ฿{totalLimit.toLocaleString()}</span>
+                    </span>
+                  </div>
+                  {currentMonthTransferIncome > 0 && (
+                    <>
+                      <div className="flex items-center justify-between text-xs mt-1 border-t border-border/50 pt-1.5">
+                        <span className="text-muted-foreground">Gross Spent (ก่อนหัก)</span>
+                        <span className="text-muted-foreground font-medium">฿{baseTotalSpent.toLocaleString()}</span>
+                      </div>
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="text-muted-foreground">Transfer Deduction</span>
+                        <span className="text-emerald-500 font-medium">-฿{currentMonthTransferIncome.toLocaleString()}</span>
+                      </div>
+                    </>
+                  )}
                 </div>
                 <Progress 
                   value={overallPercentage} 
