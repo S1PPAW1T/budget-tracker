@@ -5,8 +5,12 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Select } from "@/components/ui/select"
 import { Trash2, PlusIcon } from "lucide-react"
+import { getMonthlyBudget } from "@/lib/budget-calculations"
 
-function BudgetLimitItem({ budget, onSave }: { budget: any, onSave: (cat: string, limit: number) => void }) {
+function BudgetLimitItem({ budget, onSave }: {
+  budget: { category: string, limit: number, transfer: number, available: number },
+  onSave: (cat: string, limit: number) => void
+}) {
   const [limit, setLimit] = useState(String(budget.limit))
   
   useEffect(() => {
@@ -15,7 +19,13 @@ function BudgetLimitItem({ budget, onSave }: { budget: any, onSave: (cat: string
 
   return (
     <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between p-2.5 border-b last:border-0">
-      <span className="font-medium text-sm">{budget.category}</span>
+      <div>
+        <span className="font-medium text-sm">{budget.category}</span>
+        <p className="text-xs text-muted-foreground">
+          {budget.transfer > 0 && <span>Transfer +฿{budget.transfer.toLocaleString()} · </span>}
+          Available to spend: <span className={budget.available < 0 ? "text-destructive" : "text-emerald-600 dark:text-emerald-400"}>฿{budget.available.toLocaleString()}</span>
+        </p>
+      </div>
       <div className="flex items-center gap-2 max-w-[240px]">
         <span className="text-base text-muted-foreground">฿</span>
         <Input 
@@ -38,7 +48,8 @@ function BudgetLimitItem({ budget, onSave }: { budget: any, onSave: (cat: string
 }
 
 export default function BudgetPage() {
-  const { budgets, updateBudget, categories, addCategory, deleteCategory, selectedMonth, setSelectedMonth } = useBudget()
+  const { transactions, budgets, updateBudget, categories, addCategory, deleteCategory, selectedMonth, setSelectedMonth } = useBudget()
+  const budgetSummary = getMonthlyBudget(transactions, budgets, categories, selectedMonth)
 
   const [newCategoryName, setNewCategoryName] = useState("")
   const [newCategoryType, setNewCategoryType] = useState<"Income" | "Expense">("Expense")
@@ -114,12 +125,10 @@ export default function BudgetPage() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2">
-              {categories.filter(c => c.type === "Expense").map((cat) => {
-                const budget = budgets.find(b => b.categoryId === cat.id || b.category === cat.name)
-                const budgetData = { category: cat.name, limit: budget ? budget.limit : 0 }
-                return <BudgetLimitItem key={cat.name} budget={budgetData} onSave={updateBudget} />
+              {budgetSummary.rows.map((row) => {
+                return <BudgetLimitItem key={row.categoryId} budget={row} onSave={updateBudget} />
               })}
-              {categories.filter(c => c.type === "Expense").length === 0 && (
+              {budgetSummary.rows.length === 0 && (
                 <div className="text-center text-base text-muted-foreground py-6">
                   No expense categories found.
                 </div>

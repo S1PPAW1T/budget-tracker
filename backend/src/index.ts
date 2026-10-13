@@ -21,6 +21,7 @@ app.get("/api/categories", async (req, res) => {
         { name: "Salary", type: "Income" },
         { name: "Freelance", type: "Income" },
         { name: "Investment", type: "Income" },
+        { name: "Transfer", type: "Income" },
         { name: "Food & Coffee", type: "Expense" },
         { name: "Transportation", type: "Expense" },
         { name: "Subscriptions", type: "Expense" },
@@ -32,6 +33,12 @@ app.get("/api/categories", async (req, res) => {
         const created = await prisma.category.create({ data: cat })
         categories.push(created)
       }
+    }
+
+    // Make the Transfer income option available in databases created before this feature.
+    if (!categories.some(category => category.name.toLowerCase() === "transfer")) {
+      const transfer = await prisma.category.create({ data: { name: "Transfer", type: "Income" } })
+      categories.push(transfer)
     }
     
     res.json(categories)
@@ -59,6 +66,11 @@ app.delete("/api/categories/:name", async (req, res) => {
   try {
     const category = await prisma.category.findUnique({ where: { name } })
     if (category) {
+      // Keep income history when a funded expense category is removed.
+      await prisma.transaction.updateMany({
+        where: { destinationCategoryId: category.id },
+        data: { destinationCategoryId: null },
+      })
       // First delete associated transactions
       await prisma.transaction.deleteMany({
         where: { categoryId: category.id },
@@ -85,7 +97,7 @@ app.get("/api/budgets", async (req, res) => {
   const { month } = req.query
   try {
     const budgets = await prisma.budget.findMany({
-      where: month ? { month: String(month) } : undefined,
+      where: month ? { month: String(month) } : {},
       include: { category: true }
     })
     res.json(budgets)
@@ -118,6 +130,22 @@ app.put("/api/budgets/:categoryId", async (req, res) => {
 
 // --- Transactions ---
 
+async function validateDestination(type: string, categoryId: string, destinationCategoryId?: string | null) {
+  const source = await prisma.category.findUnique({ where: { id: categoryId } })
+  if (!source || source.type !== type) return { id: null, error: "Invalid transaction category" }
+
+  if (type !== "Income" || source.name.toLowerCase() !== "transfer") {
+    return { id: null }
+  }
+
+  if (!destinationCategoryId) return { id: null, error: "Choose an expense category for the transfer" }
+  const destination = await prisma.category.findUnique({ where: { id: destinationCategoryId } })
+  if (!destination || destination.type !== "Expense") {
+    return { id: null, error: "Transfer destination must be an expense category" }
+  }
+  return { id: destination.id }
+}
+
 app.get("/api/transactions", async (req, res) => {
   try {
     const transactions = await prisma.transaction.findMany({
@@ -132,15 +160,21 @@ app.get("/api/transactions", async (req, res) => {
 })
 
 app.post("/api/transactions", async (req, res) => {
-  const { amount, date, type, note, categoryId } = req.body
+  const { amount, date, type, note, categoryId, destinationCategoryId } = req.body
   try {
+    if (!Number.isFinite(Number(amount)) || Number(amount) <= 0) {
+      return res.status(400).json({ error: "Amount must be greater than zero" })
+    }
+    const destination = await validateDestination(type, categoryId, destinationCategoryId)
+    if (destination.error) return res.status(400).json({ error: destination.error })
     const transaction = await prisma.transaction.create({
       data: { 
         amount: Number(amount), 
         date: new Date(date), 
         type, 
         note, 
-        categoryId 
+        categoryId,
+        destinationCategoryId: destination.id,
       },
       include: { category: true }
     })
@@ -153,8 +187,13 @@ app.post("/api/transactions", async (req, res) => {
 
 app.put("/api/transactions/:id", async (req, res) => {
   const { id } = req.params
-  const { amount, date, type, note, categoryId } = req.body
+  const { amount, date, type, note, categoryId, destinationCategoryId } = req.body
   try {
+    if (!Number.isFinite(Number(amount)) || Number(amount) <= 0) {
+      return res.status(400).json({ error: "Amount must be greater than zero" })
+    }
+    const destination = await validateDestination(type, categoryId, destinationCategoryId)
+    if (destination.error) return res.status(400).json({ error: destination.error })
     const transaction = await prisma.transaction.update({
       where: { id },
       data: { 
@@ -162,7 +201,8 @@ app.put("/api/transactions/:id", async (req, res) => {
         date: new Date(date), 
         type, 
         note, 
-        categoryId 
+        categoryId,
+        destinationCategoryId: destination.id,
       },
       include: { category: true }
     })

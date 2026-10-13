@@ -19,12 +19,21 @@ interface BudgetContextType {
   isLoading: boolean
   selectedMonth: string
   setSelectedMonth: (month: string) => void
-  addTransaction: (tx: { amount: number, date: string, type: "Income" | "Expense", note?: string, category: string }) => void
-  updateTransaction: (id: string, tx: { amount: number, date: string, type: "Income" | "Expense", note?: string, category: string }) => void
+  addTransaction: (tx: TransactionInput) => void
+  updateTransaction: (id: string, tx: TransactionInput) => void
   updateBudget: (categoryName: string, newLimit: number) => void
   addCategory: (name: string, type: "Income" | "Expense") => void
   deleteCategory: (name: string) => void
   deleteTransaction: (id: string) => void
+}
+
+type TransactionInput = {
+  amount: number
+  date: string
+  type: "Income" | "Expense"
+  note?: string
+  category: string
+  destinationCategoryId?: string | null
 }
 
 const BudgetContext = createContext<BudgetContextType | undefined>(undefined)
@@ -96,7 +105,7 @@ export function BudgetProvider({ children }: { children: React.ReactNode }) {
     }
   })
 
-  const addTransaction = (tx: { amount: number, date: string, type: "Income" | "Expense", note?: string, category: string }) => {
+  const addTransaction = (tx: TransactionInput) => {
     const cat = categories.find(c => c.name === tx.category)
     if (cat) {
       addTxMutation.mutate({ 
@@ -104,7 +113,8 @@ export function BudgetProvider({ children }: { children: React.ReactNode }) {
         date: tx.date, 
         type: tx.type, 
         note: tx.note, 
-        categoryId: cat.id 
+        categoryId: cat.id,
+        destinationCategoryId: tx.destinationCategoryId ?? null,
       })
     }
   }
@@ -126,7 +136,7 @@ export function BudgetProvider({ children }: { children: React.ReactNode }) {
     }
   })
 
-  const updateTransaction = (id: string, tx: { amount: number, date: string, type: "Income" | "Expense", note?: string, category: string }) => {
+  const updateTransaction = (id: string, tx: TransactionInput) => {
     const cat = categories.find(c => c.name === tx.category)
     if (cat) {
       updateTxMutation.mutate({ 
@@ -136,7 +146,8 @@ export function BudgetProvider({ children }: { children: React.ReactNode }) {
           date: tx.date, 
           type: tx.type, 
           note: tx.note, 
-          categoryId: cat.id 
+          categoryId: cat.id,
+          destinationCategoryId: tx.destinationCategoryId ?? null,
         }
       })
     }

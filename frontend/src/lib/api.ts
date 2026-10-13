@@ -14,6 +14,7 @@ export interface Transaction {
   type: "Income" | "Expense"
   note?: string | null
   categoryId: string
+  destinationCategoryId?: string | null
   category?: Category
 }
 

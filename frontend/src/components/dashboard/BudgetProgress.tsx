@@ -3,35 +3,14 @@
 import { useBudget } from "@/context/BudgetContext"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
+import { getMonthlyBudget } from "@/lib/budget-calculations"
 
 export function BudgetProgress() {
-  const { transactions, budgets, selectedMonth } = useBudget()
-
-  const [year, month] = selectedMonth.split('-').map(Number)
-
-  const currentMonthExpenses = transactions.filter((tx) => {
-    const d = new Date(tx.date)
-    return tx.type === "Expense" && d.getMonth() === month - 1 && d.getFullYear() === year
-  })
-
-  const categorySpent = currentMonthExpenses.reduce((acc, tx) => {
-    acc[tx.category] = (acc[tx.category] || 0) + tx.amount
-    return acc
-  }, {} as Record<string, number>)
-
-  const totalLimit = budgets.reduce((acc, b) => acc + Number(b.limit || 0), 0)
-  const baseTotalSpent = Object.values(categorySpent).reduce((acc, spent) => acc + spent, 0)
-  
-  const currentMonthTransferIncome = transactions.filter((tx) => {
-    const d = new Date(tx.date)
-    return tx.type === "Income" && tx.category.toLowerCase() === "transfer" && d.getMonth() === month - 1 && d.getFullYear() === year
-  }).reduce((sum, tx) => sum + tx.amount, 0)
-
-  const totalSpent = baseTotalSpent - currentMonthTransferIncome
-
-  const remainingBudget = totalLimit - totalSpent
-  const overallPercentage = totalLimit > 0 ? Math.max(0, Math.min((totalSpent / totalLimit) * 100, 100)) : 0
-  const isOverallOver = totalSpent > totalLimit
+  const { transactions, budgets, categories, selectedMonth } = useBudget()
+  const summary = getMonthlyBudget(transactions, budgets, categories, selectedMonth)
+  const overallPercentage = summary.effectiveLimit > 0
+    ? Math.min((summary.totalSpent / summary.effectiveLimit) * 100, 100) : 0
+  const isOverallOver = summary.remaining < 0
 
   return (
     <Card className="flex flex-col">
@@ -47,7 +26,7 @@ export function BudgetProgress() {
                 <div className="flex items-center justify-between">
                   <h3 className="text-lg font-bold">Overall Budget</h3>
                   <span className="text-sm font-medium px-3 py-1 bg-background/80 backdrop-blur-sm rounded-full border shadow-sm">
-                    Remaining: <span className={`font-bold ${isOverallOver ? 'text-destructive' : 'text-primary'}`}>฿{remainingBudget.toLocaleString()}</span>
+                    Remaining: <span className={`font-bold ${isOverallOver ? 'text-destructive' : 'text-primary'}`}>฿{summary.remaining.toLocaleString()}</span>
                   </span>
                 </div>
               </div>
@@ -56,18 +35,18 @@ export function BudgetProgress() {
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-muted-foreground font-medium">Total Spent</span>
                     <span className="font-semibold text-foreground text-base">
-                      ฿{totalSpent.toLocaleString()} <span className="text-muted-foreground font-normal text-sm">/ ฿{totalLimit.toLocaleString()}</span>
+                      ฿{summary.totalSpent.toLocaleString()} <span className="text-muted-foreground font-normal text-sm">/ ฿{summary.effectiveLimit.toLocaleString()}</span>
                     </span>
                   </div>
-                  {currentMonthTransferIncome > 0 && (
+                  {summary.totalTransfers > 0 && (
                     <>
                       <div className="flex items-center justify-between text-xs mt-1 border-t border-border/50 pt-1.5">
-                        <span className="text-muted-foreground">Gross Spent (ก่อนหัก)</span>
-                        <span className="text-muted-foreground font-medium">฿{baseTotalSpent.toLocaleString()}</span>
+                        <span className="text-muted-foreground">Base Budget</span>
+                        <span className="text-muted-foreground font-medium">฿{summary.totalLimit.toLocaleString()}</span>
                       </div>
                       <div className="flex items-center justify-between text-xs">
-                        <span className="text-muted-foreground">Transfer Deduction</span>
-                        <span className="text-emerald-500 font-medium">-฿{currentMonthTransferIncome.toLocaleString()}</span>
+                        <span className="text-muted-foreground">Transfers Added</span>
+                        <span className="text-emerald-500 font-medium">+฿{summary.totalTransfers.toLocaleString()}</span>
                       </div>
                     </>
                   )}
@@ -84,18 +63,21 @@ export function BudgetProgress() {
           <div className="space-y-5">
             <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-widest pl-1">By Category</h4>
             <div className="space-y-4">
-              {budgets.map((budget) => {
-                const spent = categorySpent[budget.category] || 0
-                const percentage = budget.limit > 0 ? Math.min((spent / budget.limit) * 100, 100) : (spent > 0 ? 100 : 0)
-                const isOver = budget.limit > 0 && spent > budget.limit
+              {summary.rows.map((row) => {
+                const percentage = row.effectiveLimit > 0 ? Math.min((row.spent / row.effectiveLimit) * 100, 100) : (row.spent > 0 ? 100 : 0)
+                const isOver = row.available < 0
 
                 return (
-                  <div key={budget.category} className="space-y-2 group">
+                  <div key={row.categoryId} className="space-y-2 group">
                     <div className="flex items-center justify-between text-sm">
-                      <span className="font-semibold text-foreground/80 group-hover:text-foreground transition-colors">{budget.category}</span>
+                      <span className="font-semibold text-foreground/80 group-hover:text-foreground transition-colors">{row.category}</span>
                       <span className="text-muted-foreground font-medium text-xs">
-                        <span className={isOver ? 'text-destructive font-bold' : ''}>฿{spent.toLocaleString()}</span> / ฿{Number(budget.limit).toLocaleString()}
+                        <span className={isOver ? 'text-destructive font-bold' : ''}>฿{row.spent.toLocaleString()}</span> / ฿{row.effectiveLimit.toLocaleString()}
                       </span>
+                    </div>
+                    <div className="flex justify-between text-xs text-muted-foreground">
+                      <span>{row.transfer > 0 ? `Base ฿${row.limit.toLocaleString()} + transfer ฿${row.transfer.toLocaleString()}` : ""}</span>
+                      <span className={isOver ? "text-destructive" : "text-emerald-600 dark:text-emerald-400"}>Available ฿{row.available.toLocaleString()}</span>
                     </div>
                     <Progress 
                       value={percentage} 

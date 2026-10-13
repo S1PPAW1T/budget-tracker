@@ -1,22 +1,21 @@
-import { useState, useMemo } from "react"
+import { useMemo } from "react"
 import { useBudget } from "@/context/BudgetContext"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Select } from "@/components/ui/select"
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts"
 import { ArrowDownIcon, ArrowUpIcon, WalletIcon } from "lucide-react"
 import { Progress } from "@/components/ui/progress"
+import { getMonthlyBudget } from "@/lib/budget-calculations"
 
 const EXPENSE_COLORS = ['#f43f5e', '#fb923c', '#eab308', '#a855f7', '#ec4899', '#ef4444']
 const INCOME_COLORS = ['#2ecc71', '#10b981', '#14b8a6', '#06b6d4', '#3b82f6', '#8b5cf6']
 
 export default function ReportsPage() {
-  const { transactions, budgets } = useBudget()
+  const { transactions, budgets, categories, selectedMonth: budgetMonth, setSelectedMonth: setBudgetMonth } = useBudget()
   
-  const currentMonth = new Date().getMonth() + 1
   const currentYear = new Date().getFullYear()
 
-  const [selectedMonth, setSelectedMonth] = useState(currentMonth.toString())
-  const [selectedYear, setSelectedYear] = useState(currentYear.toString())
+  const [selectedYear, selectedMonth] = budgetMonth.split("-")
 
   const months = [
     { value: "1", label: "January" }, { value: "2", label: "February" },
@@ -39,7 +38,7 @@ export default function ReportsPage() {
   }, [transactions, selectedMonth, selectedYear])
 
   // Calculate totals
-  const { totalIncome, totalExpense, remaining, incomeData, expenseData, categorySpent } = useMemo(() => {
+  const { totalIncome, totalExpense, remaining, incomeData, expenseData } = useMemo(() => {
     let income = 0
     let expense = 0
     let incMap: Record<string, number> = {}
@@ -61,7 +60,6 @@ export default function ReportsPage() {
       remaining: income - expense,
       incomeData: Object.entries(incMap).map(([name, value]) => ({ name, value })).sort((a, b) => b.value - a.value),
       expenseData: Object.entries(expMap).map(([name, value]) => ({ name, value })).sort((a, b) => b.value - a.value),
-      categorySpent: expMap
     }
   }, [monthlyTransactions])
 
@@ -79,9 +77,10 @@ export default function ReportsPage() {
   }
 
   // Budget calculations
-  const totalLimit = budgets.reduce((acc, b) => acc + Number(b.limit || 0), 0)
-  const isOverallOver = totalExpense > totalLimit
-  const overallPercentage = totalLimit > 0 ? Math.min((totalExpense / totalLimit) * 100, 100) : 0
+  const budgetSummary = getMonthlyBudget(transactions, budgets, categories, budgetMonth)
+  const isOverallOver = budgetSummary.remaining < 0
+  const overallPercentage = budgetSummary.effectiveLimit > 0
+    ? Math.min((budgetSummary.totalSpent / budgetSummary.effectiveLimit) * 100, 100) : 0
 
   return (
     <div className="space-y-6">
@@ -92,8 +91,8 @@ export default function ReportsPage() {
         </div>
         <div className="flex gap-4">
           <Select 
-            value={selectedMonth} 
-            onChange={(e) => setSelectedMonth(e.target.value)}
+            value={String(Number(selectedMonth))}
+            onChange={(e) => setBudgetMonth(`${selectedYear}-${e.target.value.padStart(2, "0")}`)}
             className="text-base py-2 px-3 h-auto w-36 bg-card border-primary/30 shadow-sm rounded-lg focus:ring-primary"
           >
             {months.map(opt => (
@@ -102,7 +101,7 @@ export default function ReportsPage() {
           </Select>
           <Select 
             value={selectedYear} 
-            onChange={(e) => setSelectedYear(e.target.value)}
+            onChange={(e) => setBudgetMonth(`${e.target.value}-${selectedMonth}`)}
             className="text-base py-2 px-3 h-auto w-28 bg-card border-primary/30 shadow-sm rounded-lg focus:ring-primary"
           >
             {years.map(y => (
@@ -226,7 +225,7 @@ export default function ReportsPage() {
                   <div className="flex items-center justify-between">
                     <h3 className="text-lg font-semibold">Overall Budget</h3>
                     <span className="text-sm font-medium px-3 py-1.5 bg-background rounded-md border shadow-sm">
-                      Remaining: <span className={`font-bold ${isOverallOver ? 'text-destructive' : 'text-primary'}`}>฿{(totalLimit - totalExpense).toLocaleString()}</span>
+                      Remaining: <span className={`font-bold ${isOverallOver ? 'text-destructive' : 'text-primary'}`}>฿{budgetSummary.remaining.toLocaleString()}</span>
                     </span>
                   </div>
                 </div>
@@ -234,9 +233,15 @@ export default function ReportsPage() {
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-muted-foreground font-medium">Total Spent</span>
                     <span className="font-semibold text-foreground text-base">
-                      ฿{totalExpense.toLocaleString()} <span className="text-muted-foreground font-normal text-sm">/ ฿{totalLimit.toLocaleString()}</span>
+                      ฿{budgetSummary.totalSpent.toLocaleString()} <span className="text-muted-foreground font-normal text-sm">/ ฿{budgetSummary.effectiveLimit.toLocaleString()}</span>
                     </span>
                   </div>
+                  {budgetSummary.totalTransfers > 0 && (
+                    <div className="flex justify-between text-xs text-muted-foreground">
+                      <span>Base budget ฿{budgetSummary.totalLimit.toLocaleString()}</span>
+                      <span className="text-emerald-500">Transfers added +฿{budgetSummary.totalTransfers.toLocaleString()}</span>
+                    </div>
+                  )}
                   <Progress 
                     value={overallPercentage} 
                     indicatorClassName={isOverallOver ? "bg-destructive" : overallPercentage > 80 ? "bg-yellow-500" : "bg-primary"}
@@ -246,18 +251,21 @@ export default function ReportsPage() {
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {budgets.map((budget) => {
-                  const spent = categorySpent[budget.category] || 0
-                  const percentage = budget.limit > 0 ? Math.min((spent / budget.limit) * 100, 100) : (spent > 0 ? 100 : 0)
-                  const isOver = budget.limit > 0 && spent > budget.limit
+                {budgetSummary.rows.map((row) => {
+                  const percentage = row.effectiveLimit > 0 ? Math.min((row.spent / row.effectiveLimit) * 100, 100) : (row.spent > 0 ? 100 : 0)
+                  const isOver = row.available < 0
 
                   return (
-                    <div key={budget.category} className="space-y-2 p-3 border border-border/50 rounded-xl bg-background/50">
+                    <div key={row.categoryId} className="space-y-2 p-3 border border-border/50 rounded-xl bg-background/50">
                       <div className="flex items-center justify-between text-sm">
-                        <span className="font-semibold">{budget.category}</span>
+                        <span className="font-semibold">{row.category}</span>
                         <span className="text-muted-foreground font-medium">
-                          ฿{spent.toLocaleString()} / ฿{Number(budget.limit).toLocaleString()}
+                          ฿{row.spent.toLocaleString()} / ฿{row.effectiveLimit.toLocaleString()}
                         </span>
+                      </div>
+                      <div className="flex justify-between text-xs text-muted-foreground">
+                        <span>{row.transfer > 0 ? `Base ฿${row.limit.toLocaleString()} + transfer ฿${row.transfer.toLocaleString()}` : ""}</span>
+                        <span className={isOver ? "text-destructive" : "text-emerald-600 dark:text-emerald-400"}>Available ฿{row.available.toLocaleString()}</span>
                       </div>
                       <Progress 
                         value={percentage} 
@@ -268,7 +276,7 @@ export default function ReportsPage() {
                   )
                 })}
               </div>
-                {budgets.length === 0 && (
+                {budgetSummary.rows.length === 0 && (
                   <div className="text-center text-base text-muted-foreground py-6">
                     No expense categories set up.
                   </div>

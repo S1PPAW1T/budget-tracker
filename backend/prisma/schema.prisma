@@ -37,6 +37,7 @@ model Transaction {
   type       String   // "Income" | "Expense"
   note       String?
   categoryId String   @db.ObjectId
+  destinationCategoryId String? @db.ObjectId // Expense category funded by Transfer income
   
   category   Category @relation(fields: [categoryId], references: [id])
 }

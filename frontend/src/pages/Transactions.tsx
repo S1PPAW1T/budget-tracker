@@ -10,7 +10,7 @@ import { PlusIcon, PencilIcon, Trash2 } from "lucide-react"
 import { Select } from "@/components/ui/select"
 
 export default function TransactionsPage() {
-  const { transactions, deleteTransaction } = useBudget()
+  const { transactions, categories, deleteTransaction } = useBudget()
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [transactionToEdit, setTransactionToEdit] = useState<any>(null)
   const [range, setRange] = useState<"all" | "week" | "month" | "year">("all")
@@ -89,7 +89,14 @@ export default function TransactionsPage() {
                         {categoryTransactions.map(tx => (
                           <tr key={tx.id} className="group border-b last:border-0 hover:bg-secondary/20 transition-colors">
                             <td className="px-4 py-3 whitespace-nowrap">{format(new Date(tx.date), "MMM dd, yyyy")}</td>
-                            <td className="px-4 py-3 text-muted-foreground">{tx.note || "-"}</td>
+                            <td className="px-4 py-3 text-muted-foreground">
+                              {tx.note || "-"}
+                              {tx.destinationCategoryId && (
+                                <span className="block text-xs text-emerald-600 dark:text-emerald-400">
+                                  Into {categories.find(c => c.id === tx.destinationCategoryId)?.name || "deleted category"}
+                                </span>
+                              )}
+                            </td>
                             <td className={`px-4 py-3 text-right text-base font-bold whitespace-nowrap ${tx.type === "Income" ? "text-emerald-500" : "text-rose-500"}`}>
                               <div className="flex items-center justify-end gap-3">
                                 <span>{tx.type === "Income" ? "+" : "-"}฿{tx.amount.toLocaleString()}</span>

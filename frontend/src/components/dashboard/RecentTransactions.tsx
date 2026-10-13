@@ -9,7 +9,7 @@ import { PencilIcon, Trash2 } from "lucide-react"
 import { TransactionFormModal } from "@/components/transactions/TransactionFormModal"
 
 export function RecentTransactions() {
-  const { transactions, deleteTransaction } = useBudget()
+  const { transactions, categories, deleteTransaction } = useBudget()
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [transactionToEdit, setTransactionToEdit] = useState<any>(null)
 
@@ -41,6 +41,11 @@ export function RecentTransactions() {
                   <div>
                     <p className="text-base font-semibold leading-none mb-1">{tx.note || tx.category}</p>
                     <p className="text-sm text-muted-foreground">{format(new Date(tx.date), "MMM dd, yyyy")} • {tx.category}</p>
+                    {tx.destinationCategoryId && (
+                      <p className="text-xs text-emerald-600 dark:text-emerald-400">
+                        Into {categories.find(c => c.id === tx.destinationCategoryId)?.name || "deleted category"}
+                      </p>
+                    )}
                   </div>
                 </div>
                 <div className="flex items-center gap-3">

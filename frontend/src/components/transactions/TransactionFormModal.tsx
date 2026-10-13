@@ -12,17 +12,20 @@ export function TransactionFormModal({
 }: { 
   open: boolean
   onOpenChange: (open: boolean) => void 
-  transactionToEdit?: { id: string, type: "Income"|"Expense", amount: number, category: string, date: string, note?: string | null } | null
+  transactionToEdit?: { id: string, type: "Income"|"Expense", amount: number, category: string, date: string, note?: string | null, destinationCategoryId?: string | null } | null
 }) {
   const { addTransaction, updateTransaction, categories } = useBudget()
 
   const [type, setType] = useState<"Income" | "Expense">("Expense")
   const [amount, setAmount] = useState("")
   const [category, setCategory] = useState("")
+  const [destinationCategoryId, setDestinationCategoryId] = useState("")
   const [date, setDate] = useState(new Date().toISOString().split("T")[0])
   const [note, setNote] = useState("")
 
   const availableCategories = categories.filter(c => c.type === type)
+  const expenseCategories = categories.filter(c => c.type === "Expense")
+  const isTransfer = type === "Income" && category.toLowerCase() === "transfer"
 
   // Initialize state when editing or opening
   useEffect(() => {
@@ -31,11 +34,13 @@ export function TransactionFormModal({
         setType(transactionToEdit.type)
         setAmount(transactionToEdit.amount.toString())
         setCategory(transactionToEdit.category)
+        setDestinationCategoryId(transactionToEdit.destinationCategoryId || "")
         setDate(new Date(transactionToEdit.date).toISOString().split("T")[0])
         setNote(transactionToEdit.note || "")
       } else {
         setType("Expense")
         setAmount("")
+        setDestinationCategoryId("")
         setDate(new Date().toISOString().split("T")[0])
         setNote("")
         // Category will be auto-set by the other useEffect
@@ -53,8 +58,11 @@ export function TransactionFormModal({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     
-    if (!amount || isNaN(Number(amount))) return
+    if (!amount || !Number.isFinite(Number(amount)) || Number(amount) <= 0) return
     if (!category) return
+    if (isTransfer && !destinationCategoryId) return
+
+    const transferDestination = isTransfer ? destinationCategoryId : null
 
     if (transactionToEdit) {
       updateTransaction(transactionToEdit.id, {
@@ -62,7 +70,8 @@ export function TransactionFormModal({
         amount: Number(amount),
         category,
         date: new Date(date).toISOString(),
-        note
+        note,
+        destinationCategoryId: transferDestination
       })
     } else {
       addTransaction({
@@ -70,7 +79,8 @@ export function TransactionFormModal({
         amount: Number(amount),
         category,
         date: new Date(date).toISOString(),
-        note
+        note,
+        destinationCategoryId: transferDestination
       })
     }
 
@@ -132,6 +142,24 @@ export function TransactionFormModal({
               ))}
             </Select>
           </div>
+
+          {isTransfer && (
+            <div className="space-y-2">
+              <label htmlFor="transfer-destination" className="text-sm font-medium">Transfer into expense category</label>
+              <Select
+                id="transfer-destination"
+                value={destinationCategoryId}
+                onChange={(e) => setDestinationCategoryId(e.target.value)}
+                required
+              >
+                <option value="" disabled>Select a category</option>
+                {expenseCategories.map(c => (
+                  <option key={c.id} value={c.id}>{c.name}</option>
+                ))}
+              </Select>
+              <p className="text-xs text-muted-foreground">This amount will increase what you can spend in the selected category this month.</p>
+            </div>
+          )}
 
           <div className="space-y-2">
             <label className="text-sm font-medium">Date</label>
