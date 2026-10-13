@@ -75,7 +75,7 @@ export default function TransactionsPage() {
                   <CardTitle className="text-lg font-bold">
                     {category}
                   </CardTitle>
-                  <span className={`mt-1 inline-flex w-fit rounded-full px-2.5 py-1 text-[11px] font-semibold ${isIncome ? "bg-[#e9f6ef] text-[#187a55]" : "bg-[#fff0ec] text-[#ad5749]"}`}>
+                  <span className={`mt-1 inline-flex w-fit rounded-full px-2.5 py-1 text-[11px] font-semibold ${isIncome ? "bg-positive-soft text-positive" : "bg-negative-soft text-negative"}`}>
                     {isIncome ? "Income" : "Expense"}
                   </span>
                 </CardHeader>
@@ -96,12 +96,12 @@ export default function TransactionsPage() {
                             <td className="px-4 py-3 text-muted-foreground">
                               {tx.note || "-"}
                               {tx.destinationCategoryId && (
-                                <span className="block text-xs text-emerald-600 dark:text-emerald-400">
+                                <span className="block text-xs text-positive">
                                   Into {categories.find(c => c.id === tx.destinationCategoryId)?.name || "deleted category"}
                                 </span>
                               )}
                             </td>
-                            <td className={`money px-4 py-3 text-right text-sm font-bold whitespace-nowrap ${tx.type === "Income" ? "text-[#187a55]" : "text-[#ad5749]"}`}>
+                            <td className={`money px-4 py-3 text-right text-sm font-bold whitespace-nowrap ${tx.type === "Income" ? "text-positive" : "text-negative"}`}>
                               <div className="flex items-center justify-end gap-3">
                                 <span>{tx.type === "Income" ? "+" : "-"}฿{tx.amount.toLocaleString()}</span>
                                 <div className="flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100 focus-within:opacity-100">

@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
   --color-background: hsl(var(--background));
@@ -18,6 +19,10 @@
   --color-border: hsl(var(--border));
   --color-input: hsl(var(--input));
   --color-ring: hsl(var(--ring));
+  --color-positive: hsl(var(--positive));
+  --color-positive-soft: hsl(var(--positive-soft));
+  --color-negative: hsl(var(--negative));
+  --color-negative-soft: hsl(var(--negative-soft));
   --radius-sm: calc(var(--radius) - 6px);
   --radius-md: calc(var(--radius) - 3px);
   --radius-lg: var(--radius);
@@ -43,7 +48,67 @@
     --border: 135 18% 87%;
     --input: 135 18% 84%;
     --ring: 158 64% 28%;
+    --positive: 155 65% 25%;
+    --positive-soft: 145 43% 93%;
+    --negative: 5 58% 39%;
+    --negative-soft: 8 75% 95%;
+    --chart-income: #187a55;
+    --chart-expense: #ad5749;
+    --chart-balance: #526d91;
+    --chart-1: #187a55;
+    --chart-2: #a76524;
+    --chart-3: #6467a0;
+    --chart-4: #a74c70;
+    --chart-5: #247b80;
+    --chart-6: #95503e;
+    --chart-7: #527d5a;
+    --chart-8: #856737;
+    --chart-9: #4b7192;
+    --chart-10: #80628c;
+    --chart-11: #687a31;
+    --chart-12: #a36c4c;
     --radius: 1rem;
+    color-scheme: light;
+  }
+
+  :root.dark {
+    --background: 150 24% 8%;
+    --foreground: 138 28% 93%;
+    --card: 152 24% 13%;
+    --card-foreground: 138 28% 93%;
+    --primary: 151 58% 69%;
+    --primary-foreground: 153 45% 10%;
+    --secondary: 151 22% 19%;
+    --secondary-foreground: 140 26% 90%;
+    --muted: 150 19% 19%;
+    --muted-foreground: 145 17% 76%;
+    --accent: 147 31% 24%;
+    --accent-foreground: 146 59% 86%;
+    --destructive: 5 88% 79%;
+    --destructive-foreground: 5 40% 12%;
+    --border: 149 18% 32%;
+    --input: 149 18% 38%;
+    --ring: 151 69% 75%;
+    --positive: 151 64% 73%;
+    --positive-soft: 151 41% 22%;
+    --negative: 7 83% 80%;
+    --negative-soft: 7 34% 24%;
+    --chart-income: #8bdfb4;
+    --chart-expense: #f3a89b;
+    --chart-balance: #a9c8ed;
+    --chart-1: #8bdfb4;
+    --chart-2: #edba7e;
+    --chart-3: #b9b8f1;
+    --chart-4: #e7a9c6;
+    --chart-5: #8dd4d6;
+    --chart-6: #efa99b;
+    --chart-7: #b5d9a7;
+    --chart-8: #dec693;
+    --chart-9: #a9c8ed;
+    --chart-10: #d5b6df;
+    --chart-11: #c5d48c;
+    --chart-12: #dfb296;
+    color-scheme: dark;
   }
 
   * { @apply border-border; }
@@ -52,7 +117,6 @@
   body {
     @apply bg-background text-foreground antialiased;
     font-family: "DM Sans", "Noto Sans Thai", system-ui, sans-serif;
-    color-scheme: light;
     font-feature-settings: "ss01" on;
   }
 
@@ -68,9 +132,10 @@
   }
 
   select option { @apply bg-card text-card-foreground; }
-  * { scrollbar-color: #b9c9bd transparent; scrollbar-width: thin; }
+  .dark select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23c2d8c8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E"); }
+  * { scrollbar-color: hsl(var(--input)) transparent; scrollbar-width: thin; }
   *::-webkit-scrollbar { width: 9px; height: 9px; }
-  *::-webkit-scrollbar-thumb { background: #b9c9bd; border-radius: 20px; border: 2px solid transparent; background-clip: padding-box; }
+  *::-webkit-scrollbar-thumb { background: hsl(var(--input)); border-radius: 20px; border: 2px solid transparent; background-clip: padding-box; }
 }
 
 @layer utilities {
@@ -98,6 +163,7 @@
   }
 
   .balance-card { background: #15392d; color: #fff; border-color: #15392d; position: relative; isolation: isolate; }
+  .dark .balance-card { background: #1b4836; border-color: #366e53; }
   .balance-card::after {
     content: "";
     position: absolute;

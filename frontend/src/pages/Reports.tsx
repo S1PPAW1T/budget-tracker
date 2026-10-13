@@ -7,8 +7,8 @@ import { ArrowDownIcon, ArrowUpIcon, WalletIcon } from "lucide-react"
 import { Progress } from "@/components/ui/progress"
 import { getMonthlyBudget } from "@/lib/budget-calculations"
 
-const EXPENSE_COLORS = ['#cf7965', '#d99a64', '#ad7c7b', '#a194b4', '#ba8774', '#c6a66d']
-const INCOME_COLORS = ['#187a55', '#5a9d77', '#508d91', '#7491a4', '#8ba875', '#6a7eaa']
+const EXPENSE_COLORS = ['var(--chart-expense)', 'var(--chart-2)', 'var(--chart-4)', 'var(--chart-6)', 'var(--chart-8)', 'var(--chart-10)']
+const INCOME_COLORS = ['var(--chart-income)', 'var(--chart-7)', 'var(--chart-5)', 'var(--chart-9)', 'var(--chart-11)', 'var(--chart-3)']
 
 export default function ReportsPage() {
   const { transactions, budgets, categories, selectedMonth: budgetMonth, setSelectedMonth: setBudgetMonth } = useBudget()
@@ -63,19 +63,6 @@ export default function ReportsPage() {
     }
   }, [monthlyTransactions])
 
-  const renderCustomLabel = ({ cx, cy, midAngle, outerRadius, value, name }: any) => {
-    const RADIAN = Math.PI / 180
-    const radius = outerRadius * 1.3
-    const x = cx + radius * Math.cos(-midAngle * RADIAN)
-    const y = cy + radius * Math.sin(-midAngle * RADIAN)
-  
-    return (
-      <text x={x} y={y} fill="currentColor" textAnchor={x > cx ? 'start' : 'end'} dominantBaseline="central" className="text-sm sm:text-base font-semibold">
-        {name} ฿{value.toLocaleString()}
-      </text>
-    )
-  }
-
   // Budget calculations
   const budgetSummary = getMonthlyBudget(transactions, budgets, categories, budgetMonth)
   const isOverallOver = budgetSummary.remaining < 0
@@ -117,10 +104,10 @@ export default function ReportsPage() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">Total Income</CardTitle>
-            <ArrowUpIcon className="h-4 w-4 text-emerald-500" />
+            <ArrowUpIcon className="h-4 w-4 text-positive" />
           </CardHeader>
           <CardContent>
-            <div className="money text-3xl font-extrabold text-[#187a55]">
+            <div className="money min-w-0 break-all text-[clamp(1.75rem,4vw,2.25rem)] font-extrabold text-positive">
               ฿{totalIncome.toLocaleString()}
             </div>
           </CardContent>
@@ -129,10 +116,10 @@ export default function ReportsPage() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">Total Expenses</CardTitle>
-            <ArrowDownIcon className="h-4 w-4 text-rose-500" />
+            <ArrowDownIcon className="h-4 w-4 text-negative" />
           </CardHeader>
           <CardContent>
-            <div className="money text-3xl font-extrabold text-[#ad5749]">
+            <div className="money min-w-0 break-all text-[clamp(1.75rem,4vw,2.25rem)] font-extrabold text-negative">
               ฿{totalExpense.toLocaleString()}
             </div>
           </CardContent>
@@ -141,10 +128,10 @@ export default function ReportsPage() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">Net Balance</CardTitle>
-            <WalletIcon className="h-4 w-4 text-blue-500" />
+            <WalletIcon className="h-4 w-4 text-foreground" />
           </CardHeader>
           <CardContent>
-            <div className={remaining >= 0 ? "money text-3xl font-extrabold text-foreground" : "money text-3xl font-extrabold text-destructive"}>
+            <div className={remaining >= 0 ? "money min-w-0 break-all text-[clamp(1.75rem,4vw,2.25rem)] font-extrabold text-foreground" : "money min-w-0 break-all text-[clamp(1.75rem,4vw,2.25rem)] font-extrabold text-destructive"}>
               ฿{remaining.toLocaleString()}
             </div>
           </CardContent>
@@ -157,60 +144,46 @@ export default function ReportsPage() {
           <CardHeader>
             <CardTitle className="text-xl">Income vs Expense Breakdown</CardTitle>
           </CardHeader>
-          <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-8 pb-8">
-            <div className="h-[280px] w-full flex flex-col items-center">
-              <h3 className="text-lg font-bold mb-4 text-center tracking-tight text-[#187a55]">Income</h3>
-              {incomeData.length === 0 ? (
-                <div className="flex-1 flex items-center justify-center text-muted-foreground text-base">No income this month</div>
-              ) : (
-                <div className="flex-1 w-full min-h-[250px]">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <PieChart>
-                      <Pie
-                        data={incomeData}
-                        cx="50%" cy="50%" innerRadius={70} outerRadius={100} paddingAngle={4}
-                        dataKey="value" stroke="none" label={renderCustomLabel}
-                        labelLine={{ stroke: 'hsl(var(--muted-foreground))', strokeWidth: 1.5 }}
-                      >
-                        {incomeData.map((_, i) => <Cell key={`cell-${i}`} fill={INCOME_COLORS[i % INCOME_COLORS.length]} />)}
-                      </Pie>
-                      <Tooltip 
-                        contentStyle={{ backgroundColor: 'hsl(var(--card))', borderRadius: '12px', border: '1px solid hsl(var(--border))', fontSize: '14px', fontWeight: 500 }}
-                        itemStyle={{ color: 'hsl(var(--foreground))' }}
-                        formatter={(value: number) => `฿${value.toLocaleString()}`}
-                      />
-                    </PieChart>
-                  </ResponsiveContainer>
-                </div>
-              )}
-            </div>
-
-            <div className="h-[280px] w-full flex flex-col items-center border-t md:border-t-0 md:border-l border-border/50 pt-6 md:pt-0">
-              <h3 className="text-lg font-bold mb-4 text-center tracking-tight text-[#ad5749]">Expenses</h3>
-              {expenseData.length === 0 ? (
-                <div className="flex-1 flex items-center justify-center text-muted-foreground text-base">No expenses this month</div>
-              ) : (
-                <div className="flex-1 w-full min-h-[250px]">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <PieChart>
-                      <Pie
-                        data={expenseData}
-                        cx="50%" cy="50%" innerRadius={70} outerRadius={100} paddingAngle={4}
-                        dataKey="value" stroke="none" label={renderCustomLabel}
-                        labelLine={{ stroke: 'hsl(var(--muted-foreground))', strokeWidth: 1.5 }}
-                      >
-                        {expenseData.map((_, i) => <Cell key={`cell-${i}`} fill={EXPENSE_COLORS[i % EXPENSE_COLORS.length]} />)}
-                      </Pie>
-                      <Tooltip 
-                        contentStyle={{ backgroundColor: 'hsl(var(--card))', borderRadius: '12px', border: '1px solid hsl(var(--border))', fontSize: '14px', fontWeight: 500 }}
-                        itemStyle={{ color: 'hsl(var(--foreground))' }}
-                        formatter={(value: number) => `฿${value.toLocaleString()}`}
-                      />
-                    </PieChart>
-                  </ResponsiveContainer>
-                </div>
-              )}
-            </div>
+          <CardContent className="grid min-w-0 grid-cols-1 gap-8 pb-8 xl:grid-cols-2">
+            {[
+              { title: "Income", data: incomeData, colors: INCOME_COLORS, empty: "No income this month", titleColor: "text-positive" },
+              { title: "Expenses", data: expenseData, colors: EXPENSE_COLORS, empty: "No expenses this month", titleColor: "text-negative" },
+            ].map((section, sectionIndex) => (
+              <div key={section.title} className={`min-w-0 ${sectionIndex === 1 ? "border-t border-border pt-8 xl:border-l xl:border-t-0 xl:pl-8 xl:pt-0" : ""}`}>
+                <h3 className={`mb-3 text-lg font-bold ${section.titleColor}`}>{section.title}</h3>
+                {section.data.length === 0 ? (
+                  <div className="flex min-h-[160px] items-center justify-center rounded-xl bg-muted/50 px-4 text-center text-sm text-muted-foreground">{section.empty}</div>
+                ) : (
+                  <div className="grid min-w-0 gap-4 sm:grid-cols-[220px_minmax(0,1fr)] sm:items-center xl:grid-cols-1">
+                    <div className="mx-auto h-[220px] w-full max-w-[220px]" aria-hidden="true">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <PieChart>
+                          <Pie data={section.data} cx="50%" cy="50%" innerRadius={58} outerRadius={88} paddingAngle={3} dataKey="value" stroke="none">
+                            {section.data.map((_, i) => <Cell key={`${section.title}-${i}`} fill={section.colors[i % section.colors.length]} />)}
+                          </Pie>
+                          <Tooltip
+                            contentStyle={{ backgroundColor: 'hsl(var(--card))', color: 'hsl(var(--foreground))', borderRadius: '12px', border: '1px solid hsl(var(--border))', fontSize: '14px', fontWeight: 500 }}
+                            itemStyle={{ color: 'hsl(var(--foreground))' }}
+                            formatter={(value: number) => `฿${value.toLocaleString()}`}
+                          />
+                        </PieChart>
+                      </ResponsiveContainer>
+                    </div>
+                    <ul className="min-w-0 space-y-2" aria-label={`${section.title} by category`}>
+                      {section.data.map((item, i) => (
+                        <li key={item.name} className="grid min-w-0 grid-cols-[minmax(0,1fr)_auto] items-start gap-3 border-b border-border/70 py-2 text-sm last:border-b-0">
+                          <span className="flex min-w-0 items-start gap-2.5">
+                            <span className="mt-1.5 h-2.5 w-2.5 shrink-0 rounded-full" style={{ backgroundColor: section.colors[i % section.colors.length] }} />
+                            <span className="min-w-0 break-words [overflow-wrap:anywhere]">{item.name}</span>
+                          </span>
+                          <span className="money max-w-[45vw] break-all text-right font-bold sm:max-w-[160px]">฿{item.value.toLocaleString()}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            ))}
           </CardContent>
         </Card>
 
@@ -221,26 +194,26 @@ export default function ReportsPage() {
           </CardHeader>
           <CardContent>
             <div className="space-y-6">
-              <div className="p-4 bg-muted/50 rounded-xl border border-border/50 shadow-inner">
+              <div className="min-w-0 rounded-xl border border-border/50 bg-muted/50 p-4">
                 <div className="flex flex-col gap-2 mb-3">
-                  <div className="flex items-center justify-between">
+                  <div className="flex flex-wrap items-start justify-between gap-2">
                     <h3 className="text-lg font-semibold">Overall Budget</h3>
-                    <span className="text-sm font-medium px-3 py-1.5 bg-background rounded-md border shadow-sm">
-                      Remaining: <span className={`font-bold ${isOverallOver ? 'text-destructive' : 'text-primary'}`}>฿{budgetSummary.remaining.toLocaleString()}</span>
+                    <span className="max-w-full rounded-md border bg-background px-3 py-1.5 text-sm font-medium [overflow-wrap:anywhere]">
+                      Remaining: <span className={`money font-bold ${isOverallOver ? 'text-destructive' : 'text-primary'}`}>฿{budgetSummary.remaining.toLocaleString()}</span>
                     </span>
                   </div>
                 </div>
                 <div className="space-y-3">
-                  <div className="flex items-center justify-between text-sm">
+                  <div className="flex flex-wrap items-start justify-between gap-x-4 gap-y-1 text-sm">
                     <span className="text-muted-foreground font-medium">Total Spent</span>
-                    <span className="font-semibold text-foreground text-base">
+                    <span className="money min-w-0 break-all text-base font-semibold text-foreground">
                       ฿{budgetSummary.totalSpent.toLocaleString()} <span className="text-muted-foreground font-normal text-sm">/ ฿{budgetSummary.effectiveLimit.toLocaleString()}</span>
                     </span>
                   </div>
                   {budgetSummary.totalTransfers > 0 && (
-                    <div className="flex justify-between text-xs text-muted-foreground">
-                      <span>Base budget ฿{budgetSummary.totalLimit.toLocaleString()}</span>
-                      <span className="text-emerald-500">Transfers added +฿{budgetSummary.totalTransfers.toLocaleString()}</span>
+                    <div className="flex flex-wrap justify-between gap-x-4 gap-y-1 text-xs text-muted-foreground">
+                      <span className="[overflow-wrap:anywhere]">Base budget ฿{budgetSummary.totalLimit.toLocaleString()}</span>
+                      <span className="text-primary [overflow-wrap:anywhere]">Transfers added +฿{budgetSummary.totalTransfers.toLocaleString()}</span>
                     </div>
                   )}
                   <Progress 
@@ -251,22 +224,22 @@ export default function ReportsPage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid min-w-0 grid-cols-1 gap-4 xl:grid-cols-2">
                 {budgetSummary.rows.map((row) => {
                   const percentage = row.effectiveLimit > 0 ? Math.min((row.spent / row.effectiveLimit) * 100, 100) : (row.spent > 0 ? 100 : 0)
                   const isOver = row.available < 0
 
                   return (
-                    <div key={row.categoryId} className="space-y-2 p-3 border border-border/50 rounded-xl bg-background/50">
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="font-semibold">{row.category}</span>
-                        <span className="text-muted-foreground font-medium">
+                    <div key={row.categoryId} className="min-w-0 space-y-3 rounded-xl border border-border/50 bg-background/50 p-4">
+                      <div className="flex flex-wrap items-start justify-between gap-x-4 gap-y-1 text-sm">
+                        <span className="min-w-0 font-semibold [overflow-wrap:anywhere]">{row.category}</span>
+                        <span className="money min-w-0 break-all font-medium text-muted-foreground">
                           ฿{row.spent.toLocaleString()} / ฿{row.effectiveLimit.toLocaleString()}
                         </span>
                       </div>
-                      <div className="flex justify-between text-xs text-muted-foreground">
-                        <span>{row.transfer > 0 ? `Base ฿${row.limit.toLocaleString()} + transfer ฿${row.transfer.toLocaleString()}` : ""}</span>
-                        <span className={isOver ? "text-destructive" : "text-emerald-600 dark:text-emerald-400"}>Available ฿{row.available.toLocaleString()}</span>
+                      <div className="flex flex-wrap justify-between gap-x-4 gap-y-1 text-xs text-muted-foreground">
+                        <span className="min-w-0 [overflow-wrap:anywhere]">{row.transfer > 0 ? `Base ฿${row.limit.toLocaleString()} + transfer ฿${row.transfer.toLocaleString()}` : ""}</span>
+                        <span className={`money min-w-0 break-all font-semibold ${isOver ? "text-destructive" : "text-primary"}`}>Available ฿{row.available.toLocaleString()}</span>
                       </div>
                       <Progress 
                         value={percentage} 

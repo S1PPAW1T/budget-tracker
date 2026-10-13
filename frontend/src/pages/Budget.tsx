@@ -23,7 +23,7 @@ function BudgetLimitItem({ budget, onSave }: {
         <span className="font-medium text-sm">{budget.category}</span>
         <p className="text-xs text-muted-foreground">
           {budget.transfer > 0 && <span>Transfer +฿{budget.transfer.toLocaleString()} · </span>}
-          Available to spend: <span className={budget.available < 0 ? "text-destructive" : "text-emerald-600 dark:text-emerald-400"}>฿{budget.available.toLocaleString()}</span>
+          Available to spend: <span className={budget.available < 0 ? "text-destructive" : "text-positive"}>฿{budget.available.toLocaleString()}</span>
         </p>
       </div>
       <div className="flex items-center gap-2 max-w-[240px]">
@@ -108,7 +108,7 @@ export default function BudgetPage() {
                 <div key={c.name} className="flex items-center justify-between p-2.5 border rounded-lg">
                   <div className="flex items-center gap-3">
                     <span className="font-medium text-sm">{c.name}</span>
-                    <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${c.type === "Income" ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400" : "bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400"}`}>
+                    <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${c.type === "Income" ? "bg-positive-soft text-positive" : "bg-negative-soft text-negative"}`}>
                       {c.type}
                     </span>
                   </div>

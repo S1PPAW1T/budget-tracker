@@ -8,9 +8,9 @@ type ViewMode = "Daily" | "Weekly" | "Monthly"
 type TabMode = "Overview" | "Income" | "Expense"
 
 const CHART_COLORS = [
-  "#187a55", "#d99748", "#6f72a8", "#b96683",
-  "#3c8c91", "#b96955", "#729776", "#9d7d53",
-  "#5f87a5", "#96769e", "#8b9b50", "#be8a6b"
+  "var(--chart-1)", "var(--chart-2)", "var(--chart-3)", "var(--chart-4)",
+  "var(--chart-5)", "var(--chart-6)", "var(--chart-7)", "var(--chart-8)",
+  "var(--chart-9)", "var(--chart-10)", "var(--chart-11)", "var(--chart-12)"
 ]
 
 export function TransactionChart() {
@@ -148,17 +148,17 @@ export function TransactionChart() {
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={data} margin={{ top: 10, right: 20, left: 0, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
-              <XAxis dataKey="name" fontSize={14} tickLine={false} axisLine={false} tickMargin={10} />
-              <YAxis fontSize={14} tickLine={false} axisLine={false} tickFormatter={(value) => `฿${value}`} tickMargin={10} />
+              <XAxis dataKey="name" fontSize={14} tick={{ fill: 'hsl(var(--muted-foreground))' }} tickLine={false} axisLine={false} tickMargin={10} />
+              <YAxis fontSize={14} tick={{ fill: 'hsl(var(--muted-foreground))' }} tickLine={false} axisLine={false} tickFormatter={(value) => `฿${value}`} tickMargin={10} />
               <Tooltip 
-                contentStyle={{ backgroundColor: 'hsl(var(--card))', borderRadius: '12px', border: '1px solid hsl(var(--border))', fontSize: '14px', fontWeight: 500 }}
+                contentStyle={{ backgroundColor: 'hsl(var(--card))', color: 'hsl(var(--foreground))', borderRadius: '12px', border: '1px solid hsl(var(--border))', fontSize: '14px', fontWeight: 500 }}
                 itemStyle={{ color: 'hsl(var(--foreground))' }}
               />
-              <Legend wrapperStyle={{ fontSize: '14px', fontWeight: 600, marginTop: '10px' }} />
+              <Legend wrapperStyle={{ color: 'hsl(var(--foreground))', fontSize: '14px', fontWeight: 600, marginTop: '10px' }} />
               
-              {selectedTab === "Overview" && <Line type="monotone" dataKey="Income" stroke="#187a55" strokeWidth={2.5} dot={false} activeDot={{ r: 5 }} />}
-              {selectedTab === "Overview" && <Line type="monotone" dataKey="Expense" stroke="#cf7965" strokeWidth={2.5} dot={false} activeDot={{ r: 5 }} />}
-              {selectedTab === "Overview" && <Line type="monotone" dataKey="Net Balance" stroke="#6982a0" strokeWidth={2.5} dot={false} activeDot={{ r: 5 }} />}
+              {selectedTab === "Overview" && <Line type="monotone" dataKey="Income" stroke="var(--chart-income)" strokeWidth={2.5} dot={false} activeDot={{ r: 5 }} />}
+              {selectedTab === "Overview" && <Line type="monotone" dataKey="Expense" stroke="var(--chart-expense)" strokeWidth={2.5} dot={false} activeDot={{ r: 5 }} />}
+              {selectedTab === "Overview" && <Line type="monotone" dataKey="Net Balance" stroke="var(--chart-balance)" strokeWidth={2.5} dot={false} activeDot={{ r: 5 }} />}
 
               {selectedTab === "Income" && incomeCategories.map((cat, i) => (
                 <Line 

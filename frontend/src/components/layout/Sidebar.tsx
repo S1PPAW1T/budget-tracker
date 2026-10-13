@@ -1,6 +1,7 @@
 import { Link, useLocation } from "react-router-dom"
 import { cn } from "@/lib/utils"
 import { navItems } from "./navigation"
+import { ThemeToggle } from "./ThemeToggle"
 
 export function Sidebar() {
   const location = useLocation()
@@ -16,7 +17,7 @@ export function Sidebar() {
           PandaBudget
         </span>
       </div>
-      <div className="px-3 mb-4 font-['IBM_Plex_Mono'] text-[10px] uppercase tracking-[.18em] text-white/45">Workspace</div>
+      <div className="px-3 mb-4 font-['IBM_Plex_Mono'] text-[10px] uppercase tracking-[.18em] text-white/75">Workspace</div>
       <nav className="flex-1 space-y-1" aria-label="Main navigation">
         {navItems.map((item) => {
           const isActive = pathname === item.href
@@ -25,10 +26,10 @@ export function Sidebar() {
               key={item.name}
               to={item.href}
               className={cn(
-                "flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-semibold transition-colors duration-150 focus-visible:outline-offset-[-2px]",
+                "flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-semibold transition-colors duration-150 focus-visible:outline-white focus-visible:outline-offset-[-2px]",
                 isActive
                   ? "bg-white text-[#15392d]"
-                  : "text-white/65 hover:bg-white/10 hover:text-white"
+                  : "text-white/80 hover:bg-white/10 hover:text-white"
               )}
               aria-current={isActive ? "page" : undefined}
             >
@@ -40,7 +41,8 @@ export function Sidebar() {
       </nav>
 
       <div className="mt-auto mx-3 border-t border-white/15 pt-5">
-        <p className="font-['IBM_Plex_Mono'] text-[10px] uppercase tracking-[.14em] text-white/45">Your money, clearly.</p>
+        <ThemeToggle sidebar />
+        <p className="mt-5 font-['IBM_Plex_Mono'] text-[10px] uppercase tracking-[.14em] text-white/75">Your money, clearly.</p>
       </div>
     </aside>
   )

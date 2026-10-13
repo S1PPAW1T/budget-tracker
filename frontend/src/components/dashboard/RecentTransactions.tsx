@@ -35,21 +35,21 @@ export function RecentTransactions() {
             recent.map((tx) => (
               <div key={tx.id} className="group flex items-center justify-between rounded-xl border border-transparent p-3 transition-colors hover:bg-secondary/50 hover:border-border/50">
                 <div className="flex items-center gap-4">
-                  <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${tx.type === "Income" ? "bg-[#e9f6ef] text-[#187a55]" : "bg-[#fff0ec] text-[#ad5749]"}`}>
+                  <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${tx.type === "Income" ? "bg-positive-soft text-positive" : "bg-negative-soft text-negative"}`}>
                     <span className="text-lg font-bold">{tx.type === "Income" ? "+" : "-"}</span>
                   </div>
                   <div>
                     <p className="text-base font-semibold leading-none mb-1">{tx.note || tx.category}</p>
                     <p className="text-sm text-muted-foreground">{format(new Date(tx.date), "MMM dd, yyyy")} • {tx.category}</p>
                     {tx.destinationCategoryId && (
-                      <p className="text-xs text-emerald-600 dark:text-emerald-400">
+                      <p className="text-xs text-positive">
                         Into {categories.find(c => c.id === tx.destinationCategoryId)?.name || "deleted category"}
                       </p>
                     )}
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
-                  <div className={`money text-base font-bold ${tx.type === "Income" ? "text-[#187a55]" : "text-[#ad5749]"}`}>
+                  <div className={`money text-base font-bold ${tx.type === "Income" ? "text-positive" : "text-negative"}`}>
                     {tx.type === "Income" ? "+" : "-"}฿{tx.amount.toLocaleString()}
                   </div>
                   <div className="flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100 focus-within:opacity-100">

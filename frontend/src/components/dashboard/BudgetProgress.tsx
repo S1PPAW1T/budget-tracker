@@ -46,7 +46,7 @@ export function BudgetProgress() {
                       </div>
                       <div className="flex items-center justify-between text-xs">
                         <span className="text-muted-foreground">Transfers Added</span>
-                        <span className="text-emerald-500 font-medium">+฿{summary.totalTransfers.toLocaleString()}</span>
+                        <span className="text-positive font-medium">+฿{summary.totalTransfers.toLocaleString()}</span>
                       </div>
                     </>
                   )}
@@ -77,7 +77,7 @@ export function BudgetProgress() {
                     </div>
                     <div className="flex justify-between text-xs text-muted-foreground">
                       <span>{row.transfer > 0 ? `Base ฿${row.limit.toLocaleString()} + transfer ฿${row.transfer.toLocaleString()}` : ""}</span>
-                      <span className={isOver ? "text-destructive" : "text-emerald-600 dark:text-emerald-400"}>Available ฿{row.available.toLocaleString()}</span>
+                      <span className={isOver ? "text-destructive" : "text-positive"}>Available ฿{row.available.toLocaleString()}</span>
                     </div>
                     <Progress 
                       value={percentage} 

@@ -12,6 +12,11 @@ colors:
   border: "#D8E4DB"
   muted: "#5E736A"
   danger: "#B32F29"
+  darkBackground: "#101914"
+  darkSurface: "#192922"
+  darkInk: "#E8F2EB"
+  darkMuted: "#B7CCC0"
+  darkPrimary: "#82DEB1"
 typography:
   display:
     fontFamily: "Manrope, Noto Sans Thai, sans-serif"
@@ -34,9 +39,11 @@ PandaBudget is a personal finance workspace for people checking their money freq
 
 ## Colors
 
-The product uses a light canvas, white cards, and an evergreen navigation rail. Jade marks primary actions and positive money movement. Warm coral marks expenses and destructive actions. The dark balance card is the single large contrast moment on the dashboard. Chart series can use muted secondary hues so the primary jade remains recognizable.
+The product uses a light canvas, white cards, and an evergreen navigation rail. Jade marks primary actions and positive money movement. Warm coral marks expenses and destructive actions. The balance card is the single large contrast moment on the light dashboard. Chart series use secondary hues so the primary jade remains recognizable.
 
-The runtime owner is `frontend/src/index.css`. Its `:root` HSL variables implement the semantic roles above and Tailwind's `@theme` maps them to utilities. The evergreen navigation and balance card use `#15392D` directly because that is their documented signature surface. Components consume semantic utilities for controls, card surfaces, borders, and focus.
+Dark mode keeps the same ledger hierarchy on a deep green canvas with lighter green cards. Main text is pale mint; supporting text remains bright enough to read at small sizes. Positive and negative amounts, badges, chart lines, tooltip text, select arrows, and focus rings each have theme-specific colors. The navigation rail remains evergreen in both modes. The theme follows the system on first visit and a visible switch on every route saves the user's choice.
+
+The runtime owner is `frontend/src/index.css`. Its `:root` and `:root.dark` HSL variables implement the semantic roles above and Tailwind's `@theme` maps them to utilities. Chart series use CSS variables in the same file. The evergreen navigation and balance card use `#15392D` directly as their signature surface, with a separate balance-card dark mode treatment. Components consume semantic utilities for controls, card surfaces, borders, and focus.
 
 ## Typography
 

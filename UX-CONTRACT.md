@@ -16,6 +16,8 @@ The React frontend in `frontend/src` owns presentation. The Express API in `back
 
 `Sidebar` and `BottomNav` share `navigation.ts`. The four main routes use the same month state where they show monthly budget data. The welcome route links to the dashboard. Financial values stay visible in text, including the category's available amount.
 
+The theme switch is in the desktop sidebar, the mobile page header, and the welcome header. Its accessible label is "Dark mode" and its pressed state reports whether dark mode is on. First visit follows the operating system setting, then the choice persists locally across routes and reloads. All financial figures and chart legends remain text-readable in either theme.
+
 ## Data entry
 
 Transaction categories are filtered by income or expense type. Transfer income requires an expense destination. A valid save updates the transaction query; the budget views derive available amounts from the selected month's transactions and saved limits. Native select and date popup geometry is intentionally platform owned.
