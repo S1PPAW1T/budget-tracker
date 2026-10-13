@@ -1,83 +1,54 @@
-
-
 import { useBudget } from "@/context/BudgetContext"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { ArrowDownIcon, ArrowUpIcon, WalletIcon } from "lucide-react"
+import { Card, CardContent } from "@/components/ui/card"
+import { ArrowDownLeft, ArrowUpRight, Wallet } from "lucide-react"
 
 export function SummaryCards() {
   const { transactions, selectedMonth } = useBudget()
-
-  const [year, month] = selectedMonth.split('-').map(Number)
-
-  const currentMonthTx = transactions.filter((tx) => {
-    const d = new Date(tx.date)
-    return d.getMonth() === month - 1 && d.getFullYear() === year
-  })
-
-  const totalIncome = currentMonthTx
-    .filter((tx) => tx.type === "Income")
-    .reduce((sum, tx) => sum + tx.amount, 0)
-
-  const totalExpense = currentMonthTx
-    .filter((tx) => tx.type === "Expense")
-    .reduce((sum, tx) => sum + tx.amount, 0)
-
-  const allTimeIncome = transactions
-    .filter((tx) => tx.type === "Income")
-    .reduce((sum, tx) => sum + tx.amount, 0)
-
-  const allTimeExpense = transactions
-    .filter((tx) => tx.type === "Expense")
-    .reduce((sum, tx) => sum + tx.amount, 0)
-
-  const allTimeRemaining = allTimeIncome - allTimeExpense
+  const currentMonth = transactions.filter(tx => tx.date.slice(0, 7) === selectedMonth)
+  const totalIncome = currentMonth.filter(tx => tx.type === "Income").reduce((sum, tx) => sum + tx.amount, 0)
+  const totalExpense = currentMonth.filter(tx => tx.type === "Expense").reduce((sum, tx) => sum + tx.amount, 0)
+  const totalBalance = transactions.reduce((sum, tx) => sum + (tx.type === "Income" ? tx.amount : -tx.amount), 0)
 
   return (
-    <div className="grid gap-4 md:grid-cols-3">
-      <Card className="relative overflow-hidden border-emerald-500/20 bg-emerald-500/5">
-        <div className="absolute right-0 top-0 h-24 w-24 translate-x-8 -translate-y-8 rounded-full bg-emerald-500/10 blur-2xl"></div>
-        <CardHeader className="flex flex-row items-center justify-between pb-2">
-          <CardTitle className="text-sm font-medium text-emerald-600 dark:text-emerald-400">Income (รายรับเดือนนี้)</CardTitle>
-          <div className="rounded-full bg-emerald-500/20 p-2">
-            <ArrowUpIcon className="h-4 w-4 text-emerald-500" />
+    <section className="grid gap-4 lg:grid-cols-2 xl:grid-cols-3" aria-label="Money overview">
+      <Card className="balance-card min-h-[190px] overflow-hidden lg:col-span-2 xl:col-span-1">
+        <CardContent className="relative flex h-full flex-col justify-between p-6 md:p-7">
+          <div className="flex items-start justify-between">
+            <span className="font-['IBM_Plex_Mono'] text-[11px] font-semibold uppercase tracking-[.16em] text-white/65">Total balance</span>
+            <span className="rounded-xl bg-white/10 p-2.5 text-white/90"><Wallet className="h-[18px] w-[18px]" /></span>
           </div>
-        </CardHeader>
-        <CardContent>
-          <div className="text-3xl font-bold tracking-tight text-emerald-600 dark:text-emerald-400">
-            ฿{totalIncome.toLocaleString()}
-          </div>
-        </CardContent>
-      </Card>
-      
-      <Card className="relative overflow-hidden border-rose-500/20 bg-rose-500/5">
-        <div className="absolute right-0 top-0 h-24 w-24 translate-x-8 -translate-y-8 rounded-full bg-rose-500/10 blur-2xl"></div>
-        <CardHeader className="flex flex-row items-center justify-between pb-2">
-          <CardTitle className="text-sm font-medium text-rose-600 dark:text-rose-400">Expenses (รายจ่ายเดือนนี้)</CardTitle>
-          <div className="rounded-full bg-rose-500/20 p-2">
-            <ArrowDownIcon className="h-4 w-4 text-rose-500" />
-          </div>
-        </CardHeader>
-        <CardContent>
-          <div className="text-3xl font-bold tracking-tight text-rose-600 dark:text-rose-400">
-            ฿{totalExpense.toLocaleString()}
+          <div>
+            <p className="money mt-7 text-[clamp(2rem,3vw,2.9rem)] font-extrabold leading-none text-white">฿{totalBalance.toLocaleString()}</p>
+            <p className="mt-3 text-xs text-white/60">Across all recorded transactions</p>
           </div>
         </CardContent>
       </Card>
 
-      <Card className="relative overflow-hidden border-blue-500/20 bg-blue-500/5">
-        <div className="absolute right-0 top-0 h-24 w-24 translate-x-8 -translate-y-8 rounded-full bg-blue-500/10 blur-2xl"></div>
-        <CardHeader className="flex flex-row items-center justify-between pb-2">
-          <CardTitle className="text-sm font-medium text-blue-600 dark:text-blue-400">Total Balance (คงเหลือทั้งหมด)</CardTitle>
-          <div className="rounded-full bg-blue-500/20 p-2">
-            <WalletIcon className="h-4 w-4 text-blue-500" />
+      <Card className="min-h-[190px]">
+        <CardContent className="flex h-full flex-col justify-between p-6 md:p-7">
+          <div className="flex items-start justify-between">
+            <span className="font-['IBM_Plex_Mono'] text-[11px] font-semibold uppercase tracking-[.16em] text-muted-foreground">Income this month</span>
+            <span className="rounded-xl bg-[#e9f6ef] p-2.5 text-[#187a55]"><ArrowDownLeft className="h-[18px] w-[18px]" /></span>
           </div>
-        </CardHeader>
-        <CardContent>
-          <div className={allTimeRemaining >= 0 ? "text-3xl font-bold tracking-tight text-blue-600 dark:text-blue-400" : "text-3xl font-bold tracking-tight text-rose-600 dark:text-rose-400"}>
-            ฿{allTimeRemaining.toLocaleString()}
+          <div>
+            <p className="money mt-7 text-[clamp(1.75rem,2.5vw,2.45rem)] font-extrabold leading-none">฿{totalIncome.toLocaleString()}</p>
+            <p className="mt-3 text-xs text-muted-foreground">Money coming in</p>
           </div>
         </CardContent>
       </Card>
-    </div>
+
+      <Card className="min-h-[190px]">
+        <CardContent className="flex h-full flex-col justify-between p-6 md:p-7">
+          <div className="flex items-start justify-between">
+            <span className="font-['IBM_Plex_Mono'] text-[11px] font-semibold uppercase tracking-[.16em] text-muted-foreground">Spent this month</span>
+            <span className="rounded-xl bg-[#fff0ec] p-2.5 text-[#ba6050]"><ArrowUpRight className="h-[18px] w-[18px]" /></span>
+          </div>
+          <div>
+            <p className="money mt-7 text-[clamp(1.75rem,2.5vw,2.45rem)] font-extrabold leading-none">฿{totalExpense.toLocaleString()}</p>
+            <p className="mt-3 text-xs text-muted-foreground">Money going out</p>
+          </div>
+        </CardContent>
+      </Card>
+    </section>
   )
 }

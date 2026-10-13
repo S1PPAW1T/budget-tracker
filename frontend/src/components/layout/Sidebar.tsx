@@ -1,30 +1,23 @@
 import { Link, useLocation } from "react-router-dom"
-import { LayoutDashboard, ReceiptText, WalletCards, PieChart, Settings } from "lucide-react"
 import { cn } from "@/lib/utils"
-
-const navItems = [
-  { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-  { name: "Transactions", href: "/transactions", icon: ReceiptText },
-  { name: "Reports", href: "/reports", icon: PieChart },
-  { name: "Budget", href: "/budget", icon: WalletCards },
-]
+import { navItems } from "./navigation"
 
 export function Sidebar() {
   const location = useLocation()
   const pathname = location.pathname
 
   return (
-    <aside className="sticky top-0 hidden md:flex h-screen w-64 flex-col border-r border-border/50 bg-card/60 backdrop-blur-2xl px-4 py-6 shadow-2xl z-50">
-      <div className="flex items-center gap-3 px-2 mb-8">
-        <div className="flex h-10 w-10 overflow-hidden items-center justify-center rounded-xl bg-black border border-primary/30 shadow-[0_0_15px_rgba(46,204,113,0.3)]">
+    <aside className="sticky top-0 hidden md:flex h-screen w-[244px] shrink-0 flex-col bg-[#15392d] px-4 py-7 text-white lg:w-[264px]">
+      <div className="flex items-center gap-3 px-3 mb-11">
+        <div className="flex h-11 w-11 overflow-hidden items-center justify-center rounded-xl bg-white/10 ring-1 ring-white/15">
           <img src="/panda.jpg" alt="Panda Logo" className="h-full w-full object-cover" />
         </div>
-        <span className="text-xl font-bold tracking-tight text-primary drop-shadow-[0_0_8px_rgba(46,204,113,0.5)]">
+        <span className="font-['Manrope'] text-lg font-extrabold tracking-tight">
           PandaBudget
         </span>
       </div>
-      
-      <nav className="flex-1 space-y-3">
+      <div className="px-3 mb-4 font-['IBM_Plex_Mono'] text-[10px] uppercase tracking-[.18em] text-white/45">Workspace</div>
+      <nav className="flex-1 space-y-1" aria-label="Main navigation">
         {navItems.map((item) => {
           const isActive = pathname === item.href
           return (
@@ -32,24 +25,22 @@ export function Sidebar() {
               key={item.name}
               to={item.href}
               className={cn(
-                "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-semibold transition-all duration-300",
+                "flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-semibold transition-colors duration-150 focus-visible:outline-offset-[-2px]",
                 isActive
-                  ? "bg-primary/10 text-primary border border-primary/20 shadow-[0_0_10px_rgba(46,204,113,0.1)] translate-x-1"
-                  : "text-muted-foreground hover:bg-secondary/60 hover:text-foreground hover:translate-x-1"
+                  ? "bg-white text-[#15392d]"
+                  : "text-white/65 hover:bg-white/10 hover:text-white"
               )}
+              aria-current={isActive ? "page" : undefined}
             >
-              <item.icon className={cn("h-5 w-5 transition-colors", isActive ? "text-primary" : "text-muted-foreground")} />
+              <item.icon className="h-[18px] w-[18px]" strokeWidth={1.9} />
               {item.name}
             </Link>
           )
         })}
       </nav>
 
-      <div className="mt-auto pt-6 border-t border-border/50">
-        <button className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-semibold text-muted-foreground transition-all duration-300 hover:bg-secondary/60 hover:text-foreground hover:translate-x-1">
-          <Settings className="h-5 w-5 text-muted-foreground" />
-          Settings
-        </button>
+      <div className="mt-auto mx-3 border-t border-white/15 pt-5">
+        <p className="font-['IBM_Plex_Mono'] text-[10px] uppercase tracking-[.14em] text-white/45">Your money, clearly.</p>
       </div>
     </aside>
   )

@@ -8,9 +8,9 @@ type ViewMode = "Daily" | "Weekly" | "Monthly"
 type TabMode = "Overview" | "Income" | "Expense"
 
 const CHART_COLORS = [
-  "#3b82f6", "#f59e0b", "#8b5cf6", "#ec4899", 
-  "#10b981", "#f43f5e", "#0ea5e9", "#14b8a6",
-  "#6366f1", "#d946ef", "#84cc16", "#eab308"
+  "#187a55", "#d99748", "#6f72a8", "#b96683",
+  "#3c8c91", "#b96955", "#729776", "#9d7d53",
+  "#5f87a5", "#96769e", "#8b9b50", "#be8a6b"
 ]
 
 export function TransactionChart() {
@@ -106,20 +106,19 @@ export function TransactionChart() {
   const expenseCategories = categories.filter(c => c.type === "Expense")
 
   return (
-    <Card className="col-span-full shadow-sm overflow-hidden border-border/50">
-      <CardHeader className="flex flex-col gap-5 pb-6 bg-secondary/10 border-b border-border/40">
+    <Card className="col-span-full overflow-hidden">
+      <CardHeader className="flex flex-col gap-5 border-b border-border pb-5">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <CardTitle className="text-xl flex items-center gap-2">
-            <div className="w-2 h-6 bg-primary rounded-full"></div>
+          <CardTitle className="text-lg font-bold flex items-center gap-2">
             {selectedTab === "Overview" ? "Income vs Expenses" : `${selectedTab} Breakdown`}
           </CardTitle>
-          <div className="flex bg-secondary/80 backdrop-blur-sm p-1 rounded-lg border shadow-inner">
+          <div className="flex bg-secondary p-1 rounded-xl">
           {(["Daily", "Weekly", "Monthly"] as ViewMode[]).map((mode) => (
             <button
               key={mode}
               onClick={() => setViewMode(mode)}
-              className={`px-3 py-1 text-xs font-semibold rounded transition-colors ${
-                viewMode === mode ? "bg-background shadow-sm text-primary" : "text-muted-foreground hover:text-foreground"
+              className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors ${
+                viewMode === mode ? "bg-card shadow-sm text-primary" : "text-muted-foreground hover:text-foreground"
               }`}
             >
               {mode}
@@ -133,10 +132,10 @@ export function TransactionChart() {
             <button
               key={tab}
               onClick={() => setSelectedTab(tab)}
-              className={`whitespace-nowrap px-5 py-1.5 text-sm font-medium rounded-full transition-colors ${
+              className={`whitespace-nowrap px-4 py-1.5 text-sm font-medium rounded-lg transition-colors ${
                 selectedTab === tab 
-                  ? "bg-primary text-primary-foreground shadow-sm" 
-                  : "bg-secondary text-muted-foreground hover:bg-secondary/80 hover:text-foreground"
+                  ? "bg-primary text-primary-foreground"
+                  : "bg-secondary text-muted-foreground hover:bg-accent hover:text-foreground"
               }`}
             >
               {tab}
@@ -157,9 +156,9 @@ export function TransactionChart() {
               />
               <Legend wrapperStyle={{ fontSize: '14px', fontWeight: 600, marginTop: '10px' }} />
               
-              {selectedTab === "Overview" && <Line type="monotone" dataKey="Income" stroke="#2ecc71" strokeWidth={3} dot={{ r: 4 }} activeDot={{ r: 6 }} />}
-              {selectedTab === "Overview" && <Line type="monotone" dataKey="Expense" stroke="#f43f5e" strokeWidth={3} dot={{ r: 4 }} activeDot={{ r: 6 }} />}
-              {selectedTab === "Overview" && <Line type="monotone" dataKey="Net Balance" stroke="#3b82f6" strokeWidth={3} dot={{ r: 4 }} activeDot={{ r: 6 }} />}
+              {selectedTab === "Overview" && <Line type="monotone" dataKey="Income" stroke="#187a55" strokeWidth={2.5} dot={false} activeDot={{ r: 5 }} />}
+              {selectedTab === "Overview" && <Line type="monotone" dataKey="Expense" stroke="#cf7965" strokeWidth={2.5} dot={false} activeDot={{ r: 5 }} />}
+              {selectedTab === "Overview" && <Line type="monotone" dataKey="Net Balance" stroke="#6982a0" strokeWidth={2.5} dot={false} activeDot={{ r: 5 }} />}
 
               {selectedTab === "Income" && incomeCategories.map((cat, i) => (
                 <Line 

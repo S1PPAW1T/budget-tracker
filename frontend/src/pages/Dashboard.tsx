@@ -16,26 +16,25 @@ export default function DashboardPage() {
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   return (
-    <div className="space-y-8 relative">
-      {/* Decorative background element */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-3xl h-64 bg-primary/5 blur-[120px] rounded-full pointer-events-none -z-10"></div>
-      
-      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 border-b border-border/40 pb-6">
+    <div className="space-y-7">
+      <div className="flex flex-col gap-5 border-b border-border pb-7 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h1 className="text-4xl font-extrabold tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">Dashboard</h1>
-          <p className="text-base text-muted-foreground mt-2">Overview of your budget and spending.</p>
+          <p className="eyebrow mb-2">Your workspace</p>
+          <h1 className="page-title">Dashboard</h1>
+          <p className="mt-2 text-sm text-muted-foreground">A clear view of what came in, went out, and is still available.</p>
         </div>
-        <div className="flex items-center gap-4">
+        <div className="flex flex-wrap items-center gap-3">
           <div className="flex items-center gap-2">
-            <label className="text-sm font-medium text-muted-foreground whitespace-nowrap">Month:</label>
+            <label htmlFor="dashboard-month" className="text-sm font-medium text-muted-foreground whitespace-nowrap">Month</label>
             <Input 
+              id="dashboard-month"
               type="month" 
               value={selectedMonth} 
               onChange={(e) => setSelectedMonth(e.target.value)}
               className="w-40"
             />
           </div>
-          <Button onClick={() => setIsModalOpen(true)} size="sm" className="gap-2 rounded-full px-6 shadow-lg shadow-primary/20 hover:shadow-primary/40 transition-all">
+          <Button onClick={() => setIsModalOpen(true)} className="gap-2">
             <PlusIcon className="h-4 w-4" />
             Add Transaction
           </Button>
@@ -44,9 +43,9 @@ export default function DashboardPage() {
 
       <SummaryCards />
 
-      <div className="space-y-6">
+      <div className="space-y-5">
         <TransactionChart />
-        <div className="grid gap-6 md:grid-cols-2">
+        <div className="grid gap-5 xl:grid-cols-2">
           <BudgetProgress />
           <RecentTransactions />
         </div>

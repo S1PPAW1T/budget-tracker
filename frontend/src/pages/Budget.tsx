@@ -62,15 +62,17 @@ export default function BudgetPage() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div className="space-y-7">
+      <div className="flex flex-col gap-5 border-b border-border pb-7 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Budget & Categories</h1>
-          <p className="text-base text-muted-foreground mt-1">Manage your monthly spending limits and transaction categories.</p>
+          <p className="eyebrow mb-2">Planning</p>
+          <h1 className="page-title">Budget & Categories</h1>
+          <p className="mt-2 text-sm text-muted-foreground">Set your monthly limits and keep each category on track.</p>
         </div>
         <div className="flex items-center gap-2">
-          <label className="text-sm font-medium text-muted-foreground whitespace-nowrap">Month:</label>
+          <label htmlFor="budget-month" className="text-sm font-medium text-muted-foreground whitespace-nowrap">Month</label>
           <Input 
+            id="budget-month"
             type="month" 
             value={selectedMonth} 
             onChange={(e) => setSelectedMonth(e.target.value)}
@@ -79,10 +81,10 @@ export default function BudgetPage() {
         </div>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2">
+      <div className="grid gap-5 xl:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle className="text-xl">Manage Categories</CardTitle>
+            <CardTitle className="text-lg font-bold">Manage Categories</CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="flex items-center gap-2">
@@ -96,7 +98,7 @@ export default function BudgetPage() {
                 <option value="Expense">Expense</option>
                 <option value="Income">Income</option>
               </Select>
-              <Button size="icon" onClick={handleAddCategory}>
+              <Button size="icon" aria-label="Add category" onClick={handleAddCategory}>
                 <PlusIcon className="h-4 w-4" />
               </Button>
             </div>
@@ -110,7 +112,7 @@ export default function BudgetPage() {
                       {c.type}
                     </span>
                   </div>
-                  <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-destructive" onClick={() => deleteCategory(c.name)}>
+                  <Button variant="ghost" size="icon" aria-label={`Delete ${c.name} category`} className="h-8 w-8 text-muted-foreground hover:text-destructive" onClick={() => deleteCategory(c.name)}>
                     <Trash2 className="h-4 w-4" />
                   </Button>
                 </div>
@@ -121,7 +123,7 @@ export default function BudgetPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle className="text-xl">Category Limits (Expenses)</CardTitle>
+            <CardTitle className="text-lg font-bold">Category Limits</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2">

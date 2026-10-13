@@ -7,8 +7,8 @@ import { ArrowDownIcon, ArrowUpIcon, WalletIcon } from "lucide-react"
 import { Progress } from "@/components/ui/progress"
 import { getMonthlyBudget } from "@/lib/budget-calculations"
 
-const EXPENSE_COLORS = ['#f43f5e', '#fb923c', '#eab308', '#a855f7', '#ec4899', '#ef4444']
-const INCOME_COLORS = ['#2ecc71', '#10b981', '#14b8a6', '#06b6d4', '#3b82f6', '#8b5cf6']
+const EXPENSE_COLORS = ['#cf7965', '#d99a64', '#ad7c7b', '#a194b4', '#ba8774', '#c6a66d']
+const INCOME_COLORS = ['#187a55', '#5a9d77', '#508d91', '#7491a4', '#8ba875', '#6a7eaa']
 
 export default function ReportsPage() {
   const { transactions, budgets, categories, selectedMonth: budgetMonth, setSelectedMonth: setBudgetMonth } = useBudget()
@@ -83,13 +83,14 @@ export default function ReportsPage() {
     ? Math.min((budgetSummary.totalSpent / budgetSummary.effectiveLimit) * 100, 100) : 0
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div className="space-y-7">
+      <div className="flex flex-col gap-5 border-b border-border pb-7 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Monthly Reports</h1>
-          <p className="text-base text-muted-foreground mt-1">Deep dive into your monthly income, expenses, and budgets.</p>
+          <p className="eyebrow mb-2">Insights</p>
+          <h1 className="page-title">Monthly Reports</h1>
+          <p className="mt-2 text-sm text-muted-foreground">See the patterns behind your income and spending.</p>
         </div>
-        <div className="flex gap-4">
+        <div className="flex flex-wrap gap-3">
           <Select 
             value={String(Number(selectedMonth))}
             onChange={(e) => setBudgetMonth(`${selectedYear}-${e.target.value.padStart(2, "0")}`)}
@@ -112,14 +113,14 @@ export default function ReportsPage() {
       </div>
 
       {/* Summary Cards */}
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid gap-4 lg:grid-cols-2 xl:grid-cols-3">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">Total Income</CardTitle>
             <ArrowUpIcon className="h-4 w-4 text-emerald-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold tracking-tight text-emerald-500">
+            <div className="money text-3xl font-extrabold text-[#187a55]">
               ฿{totalIncome.toLocaleString()}
             </div>
           </CardContent>
@@ -131,7 +132,7 @@ export default function ReportsPage() {
             <ArrowDownIcon className="h-4 w-4 text-rose-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold tracking-tight text-rose-500">
+            <div className="money text-3xl font-extrabold text-[#ad5749]">
               ฿{totalExpense.toLocaleString()}
             </div>
           </CardContent>
@@ -143,7 +144,7 @@ export default function ReportsPage() {
             <WalletIcon className="h-4 w-4 text-blue-500" />
           </CardHeader>
           <CardContent>
-            <div className={remaining >= 0 ? "text-3xl font-bold tracking-tight text-blue-500" : "text-3xl font-bold tracking-tight text-rose-500"}>
+            <div className={remaining >= 0 ? "money text-3xl font-extrabold text-foreground" : "money text-3xl font-extrabold text-destructive"}>
               ฿{remaining.toLocaleString()}
             </div>
           </CardContent>
@@ -158,7 +159,7 @@ export default function ReportsPage() {
           </CardHeader>
           <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-8 pb-8">
             <div className="h-[280px] w-full flex flex-col items-center">
-              <h3 className="text-lg font-bold mb-4 text-center tracking-tight text-emerald-500">Income</h3>
+              <h3 className="text-lg font-bold mb-4 text-center tracking-tight text-[#187a55]">Income</h3>
               {incomeData.length === 0 ? (
                 <div className="flex-1 flex items-center justify-center text-muted-foreground text-base">No income this month</div>
               ) : (
@@ -185,7 +186,7 @@ export default function ReportsPage() {
             </div>
 
             <div className="h-[280px] w-full flex flex-col items-center border-t md:border-t-0 md:border-l border-border/50 pt-6 md:pt-0">
-              <h3 className="text-lg font-bold mb-4 text-center tracking-tight text-rose-500">Expenses</h3>
+              <h3 className="text-lg font-bold mb-4 text-center tracking-tight text-[#ad5749]">Expenses</h3>
               {expenseData.length === 0 ? (
                 <div className="flex-1 flex items-center justify-center text-muted-foreground text-base">No expenses this month</div>
               ) : (

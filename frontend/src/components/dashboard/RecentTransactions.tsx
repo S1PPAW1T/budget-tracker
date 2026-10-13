@@ -35,7 +35,7 @@ export function RecentTransactions() {
             recent.map((tx) => (
               <div key={tx.id} className="group flex items-center justify-between rounded-xl border border-transparent p-3 transition-colors hover:bg-secondary/50 hover:border-border/50">
                 <div className="flex items-center gap-4">
-                  <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${tx.type === "Income" ? "bg-emerald-500/10 text-emerald-500" : "bg-rose-500/10 text-rose-500"}`}>
+                  <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${tx.type === "Income" ? "bg-[#e9f6ef] text-[#187a55]" : "bg-[#fff0ec] text-[#ad5749]"}`}>
                     <span className="text-lg font-bold">{tx.type === "Income" ? "+" : "-"}</span>
                   </div>
                   <div>
@@ -49,14 +49,14 @@ export function RecentTransactions() {
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
-                  <div className={`text-base font-bold ${tx.type === "Income" ? "text-emerald-500" : "text-rose-500"}`}>
+                  <div className={`money text-base font-bold ${tx.type === "Income" ? "text-[#187a55]" : "text-[#ad5749]"}`}>
                     {tx.type === "Income" ? "+" : "-"}฿{tx.amount.toLocaleString()}
                   </div>
                   <div className="flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100 focus-within:opacity-100">
-                    <Button variant="ghost" size="icon" onClick={() => { setTransactionToEdit(tx); setIsModalOpen(true); }} className="h-8 w-8 text-muted-foreground hover:text-foreground">
+                    <Button variant="ghost" size="icon" aria-label={`Edit ${tx.category} transaction`} onClick={() => { setTransactionToEdit(tx); setIsModalOpen(true); }} className="h-8 w-8 text-muted-foreground hover:text-foreground">
                       <PencilIcon className="h-4 w-4" />
                     </Button>
-                    <Button variant="ghost" size="icon" onClick={() => deleteTransaction(tx.id)} className="h-8 w-8 text-muted-foreground hover:text-destructive">
+                    <Button variant="ghost" size="icon" aria-label={`Delete ${tx.category} transaction`} onClick={() => deleteTransaction(tx.id)} className="h-8 w-8 text-muted-foreground hover:text-destructive">
                       <Trash2 className="h-4 w-4" />
                     </Button>
                   </div>

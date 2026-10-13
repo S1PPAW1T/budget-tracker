@@ -18,63 +18,102 @@
   --color-border: hsl(var(--border));
   --color-input: hsl(var(--input));
   --color-ring: hsl(var(--ring));
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 6px);
+  --radius-md: calc(var(--radius) - 3px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
 }
 
 @layer base {
   :root {
-    --background: 0 0% 0%; /* Pitch Black */
-    --foreground: 0 0% 98%;
-    --card: 142 10% 4%; /* Extremely dark green-tinted black for cards */
-    --card-foreground: 0 0% 98%;
-    --primary: 142 71% 45%; /* Bamboo Green */
-    --primary-foreground: 0 0% 0%; /* Black text on green buttons */
-    --secondary: 142 10% 12%; /* Dark subtle green */
-    --secondary-foreground: 0 0% 98%;
-    --muted: 0 0% 10%;
-    --muted-foreground: 0 0% 65%;
-    --accent: 142 10% 12%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62% 30%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 142 20% 15%; /* Greenish border */
-    --input: 142 20% 15%;
-    --ring: 142 71% 45%;
-    --radius: 1rem; /* Rounder, friendlier corners */
+    --background: 130 16% 96%;
+    --foreground: 153 30% 14%;
+    --card: 0 0% 100%;
+    --card-foreground: 153 30% 14%;
+    --primary: 158 64% 28%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 135 24% 93%;
+    --secondary-foreground: 153 30% 19%;
+    --muted: 130 15% 95%;
+    --muted-foreground: 154 10% 41%;
+    --accent: 146 28% 91%;
+    --accent-foreground: 158 64% 23%;
+    --destructive: 3 63% 43%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 135 18% 87%;
+    --input: 135 18% 84%;
+    --ring: 158 64% 28%;
+    --radius: 1rem;
   }
 
-  * {
-    @apply border-border;
-  }
-  
+  * { @apply border-border; }
+  html { scroll-behavior: smooth; }
+
   body {
     @apply bg-background text-foreground antialiased;
-    font-family: 'Outfit', system-ui, -apple-system, sans-serif;
-    color-scheme: dark; /* Forces native UI elements like dropdowns to be dark */
+    font-family: "DM Sans", "Noto Sans Thai", system-ui, sans-serif;
+    color-scheme: light;
+    font-feature-settings: "ss01" on;
   }
 
-  /* Custom Dropdown Styling for native select elements */
+  button, input, select { font: inherit; }
+  :focus-visible { outline: 2px solid hsl(var(--ring)); outline-offset: 2px; }
+
   select {
-    @apply bg-background text-foreground border border-input rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-colors appearance-none cursor-pointer;
-    /* Custom dropdown arrow */
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%232ecc71' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
-    background-position: right 0.5rem center;
+    @apply bg-card text-foreground border border-input rounded-md px-3 py-2 text-sm appearance-none cursor-pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23576c61' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-position: right .75rem center;
     background-repeat: no-repeat;
-    background-size: 1.5em 1.5em;
     padding-right: 2.5rem;
   }
-  
-  select option {
-    @apply bg-card text-card-foreground py-2;
-  }
+
+  select option { @apply bg-card text-card-foreground; }
+  * { scrollbar-color: #b9c9bd transparent; scrollbar-width: thin; }
+  *::-webkit-scrollbar { width: 9px; height: 9px; }
+  *::-webkit-scrollbar-thumb { background: #b9c9bd; border-radius: 20px; border: 2px solid transparent; background-clip: padding-box; }
 }
 
 @layer utilities {
-  .bg-pattern {
-    background-image: radial-gradient(hsl(142 71% 45% / 0.15) 1.5px, transparent 1.5px);
-    background-size: 32px 32px;
+  .page-title {
+    font-family: "Manrope", "Noto Sans Thai", sans-serif;
+    font-size: clamp(2rem, 3vw, 2.65rem);
+    font-weight: 800;
+    letter-spacing: -.055em;
+    line-height: 1.12;
   }
+
+  .eyebrow {
+    color: hsl(var(--primary));
+    font-family: "IBM Plex Mono", monospace;
+    font-size: .7rem;
+    font-weight: 600;
+    letter-spacing: .13em;
+    text-transform: uppercase;
+  }
+
+  .money {
+    font-family: "Manrope", "Noto Sans Thai", sans-serif;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -.04em;
+  }
+
+  .balance-card { background: #15392d; color: #fff; border-color: #15392d; position: relative; isolation: isolate; }
+  .balance-card::after {
+    content: "";
+    position: absolute;
+    width: 18rem;
+    height: 18rem;
+    right: -5rem;
+    top: -9rem;
+    border: 1px solid rgba(255,255,255,.18);
+    border-radius: 50%;
+    box-shadow: 0 0 0 3rem rgba(255,255,255,.035), 0 0 0 6rem rgba(255,255,255,.025);
+    pointer-events: none;
+    z-index: -1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
 }

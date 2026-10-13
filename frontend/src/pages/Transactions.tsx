@@ -41,13 +41,14 @@ export default function TransactionsPage() {
   const groupedCategories = Object.entries(categoriesMap).sort(([a], [b]) => a.localeCompare(b))
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div className="space-y-7">
+      <div className="flex flex-col gap-5 border-b border-border pb-7 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Transactions</h1>
-          <p className="text-base text-muted-foreground mt-1">History of all your income and expenses.</p>
+          <p className="eyebrow mb-2">Activity</p>
+          <h1 className="page-title">Transactions</h1>
+          <p className="mt-2 text-sm text-muted-foreground">Every move your money makes, in one place.</p>
         </div>
-        <div className="flex items-center gap-4">
+        <div className="flex flex-wrap items-center gap-3">
           <div className="w-48">
             <Select value={range} onChange={(e) => setRange(e.target.value as any)}>
               <option value="all">All Time (Default)</option>
@@ -56,7 +57,7 @@ export default function TransactionsPage() {
               <option value="year">This Year</option>
             </Select>
           </div>
-          <Button onClick={() => { setTransactionToEdit(null); setIsModalOpen(true); }} size="sm" className="gap-2">
+          <Button onClick={() => { setTransactionToEdit(null); setIsModalOpen(true); }} className="gap-2">
             <PlusIcon className="h-4 w-4" />
             Add Transaction
           </Button>
@@ -64,21 +65,24 @@ export default function TransactionsPage() {
       </div>
 
       {groupedCategories.length > 0 ? (
-        <div className="grid gap-6 lg:grid-cols-2">
+        <div className="grid gap-5 xl:grid-cols-2">
           {groupedCategories.map(([category, categoryTransactions]) => {
             const isIncome = categoryTransactions.some(tx => tx.type === "Income")
             
             return (
               <Card key={category}>
                 <CardHeader>
-                  <CardTitle className={`text-xl ${isIncome ? "text-emerald-500" : "text-rose-500"}`}>
+                  <CardTitle className="text-lg font-bold">
                     {category}
                   </CardTitle>
+                  <span className={`mt-1 inline-flex w-fit rounded-full px-2.5 py-1 text-[11px] font-semibold ${isIncome ? "bg-[#e9f6ef] text-[#187a55]" : "bg-[#fff0ec] text-[#ad5749]"}`}>
+                    {isIncome ? "Income" : "Expense"}
+                  </span>
                 </CardHeader>
                 <CardContent>
                   <div className="overflow-x-auto">
                     <table className="w-full text-sm text-left">
-                      <thead className="text-xs text-muted-foreground uppercase bg-secondary/50 font-semibold tracking-wider">
+                      <thead className="bg-muted text-[11px] font-semibold uppercase tracking-[.1em] text-muted-foreground">
                         <tr>
                           <th className="px-4 py-3 rounded-tl-md">Date</th>
                           <th className="px-4 py-3">Note</th>
@@ -97,14 +101,14 @@ export default function TransactionsPage() {
                                 </span>
                               )}
                             </td>
-                            <td className={`px-4 py-3 text-right text-base font-bold whitespace-nowrap ${tx.type === "Income" ? "text-emerald-500" : "text-rose-500"}`}>
+                            <td className={`money px-4 py-3 text-right text-sm font-bold whitespace-nowrap ${tx.type === "Income" ? "text-[#187a55]" : "text-[#ad5749]"}`}>
                               <div className="flex items-center justify-end gap-3">
                                 <span>{tx.type === "Income" ? "+" : "-"}฿{tx.amount.toLocaleString()}</span>
                                 <div className="flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100 focus-within:opacity-100">
-                                  <Button variant="ghost" size="icon" onClick={() => { setTransactionToEdit(tx); setIsModalOpen(true); }} className="h-8 w-8 text-muted-foreground hover:text-foreground">
+                                  <Button variant="ghost" size="icon" aria-label={`Edit ${tx.category} transaction`} onClick={() => { setTransactionToEdit(tx); setIsModalOpen(true); }} className="h-8 w-8 text-muted-foreground hover:text-foreground">
                                     <PencilIcon className="h-4 w-4" />
                                   </Button>
-                                  <Button variant="ghost" size="icon" onClick={() => deleteTransaction(tx.id)} className="h-8 w-8 text-muted-foreground hover:text-destructive">
+                                  <Button variant="ghost" size="icon" aria-label={`Delete ${tx.category} transaction`} onClick={() => deleteTransaction(tx.id)} className="h-8 w-8 text-muted-foreground hover:text-destructive">
                                     <Trash2 className="h-4 w-4" />
                                   </Button>
                                 </div>
